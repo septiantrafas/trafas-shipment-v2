@@ -1,0 +1,46 @@
+import React, { useContext, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { supabase } from "../supabase";
+
+const AuthContext = React.createContext();
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+export function AuthProvider({ children }) {
+  const dispatch = useDispatch();
+  const [user, setUser] = useState();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const session = supabase.auth.session();
+
+    setUser(session?.user ?? null);
+    setLoading(false);
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => {
+      listener?.unsubscribe();
+    };
+  }, []);
+
+ 
+  const value = {
+    signUp: (data) => supabase.auth.signUp(data),
+    signIn: (data) => supabase.auth.signIn(data),
+    signOut: () => supabase.auth.signOut(),
+    user,
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+}
