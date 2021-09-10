@@ -77,7 +77,7 @@ function Order() {
 
   useEffect(() => {
     if (orderListStatus === "idle") {
-      dispatch(fetchOrderByEmployee(user.id));
+      dispatch(fetchOrder());
     }
   }, [orderListStatus, dispatch]);
 
