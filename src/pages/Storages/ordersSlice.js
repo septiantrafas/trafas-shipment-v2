@@ -80,6 +80,23 @@ export const updateOrder = createAsyncThunk(
   }
 );
 
+export const updateDataByCollectedStatus = createAsyncThunk(
+  "orders/updateDataByCollectedStatus",
+  async (updatedData) => {
+    const { data, error } = await supabase
+      .from("orders")
+      .update({
+        number: updatedData.number,
+        product_list: updatedData.product_list,
+      })
+      .eq("id", updatedData.order_id);
+    if (error) {
+      alert(error.message);
+    }
+    return data;
+  }
+);
+
 const ordersSlice = createSlice({
   name: "orders",
   initialState,
@@ -158,6 +175,7 @@ const ordersSlice = createSlice({
       state.orderDeleteStatus = "failed";
       state.orderDeleteError = action.error.message;
     },
+
     [updateOrder.pending]: (state) => {
       state.orderUpdateStatus = "loading";
     },
@@ -166,6 +184,18 @@ const ordersSlice = createSlice({
       state.orderUpdate = action.payload.data;
     },
     [updateOrder.rejected]: (state, action) => {
+      state.orderUpdateStatus = "failed";
+      state.orderUpdateError = action.error.message;
+    },
+
+    [updateDataByCollectedStatus.pending]: (state) => {
+      state.orderUpdateStatus = "loading";
+    },
+    [updateDataByCollectedStatus.fulfilled]: (state, action) => {
+      state.orderUpdateStatus = "succeeded";
+      state.orderUpdate = action.payload.data;
+    },
+    [updateDataByCollectedStatus.rejected]: (state, action) => {
       state.orderUpdateStatus = "failed";
       state.orderUpdateError = action.error.message;
     },

@@ -38,11 +38,12 @@ function Layout() {
                     key={i}
                     exact={true}
                     path={`/app${route.path}`}
+                    roles={route.roles}
                     component={route.component}
                   />
                 ) : null;
               })}
-              <Redirect exact from="/app" to="/app/dashboard" />
+              <Redirect exact from="/app" to="/app/report" />
               <PrivateRoute component={Page404} />
             </Switch>
           </Suspense>

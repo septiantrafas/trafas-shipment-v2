@@ -29,6 +29,9 @@ const initialState = {
   statuslogUpdate: [],
   statuslogUpdateStatus: "idle",
   statuslogUpdateError: null,
+  statuslogEmployeeUpdate: [],
+  statuslogEmployeeUpdateStatus: "idle",
+  statuslogEmployeeUpdateError: null,
 };
 
 export const fetchStatuslogById = createAsyncThunk(
@@ -37,7 +40,7 @@ export const fetchStatuslogById = createAsyncThunk(
     const response = await supabase
       .from("status_logs")
       .select(
-        `*,orders:order_id(customer_name,customer_address,delivery_date),employees:employee_id(name)`
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
       )
       .eq("id", id);
     if (response.error) {
@@ -53,7 +56,7 @@ export const fetchStatuslogByOrderId = createAsyncThunk(
     const response = await supabase
       .from("status_logs")
       .select(
-        `*,orders:order_id(customer_name,customer_address,delivery_date),employees:employee_id(name)`
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status,product_list),employees:employee_id(name)`
       )
       .eq("order_id", id)
       .order("number", { ascending: true });
@@ -70,7 +73,7 @@ export const fetchStatuslogByConfirmed = createAsyncThunk(
     const response = await supabase
       .from("status_logs")
       .select(
-        `*,orders:order_id(customer_name,customer_address,delivery_date),employees:employee_id(name)`
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
       )
       .eq("name", "confirmed");
     if (response.error) {
@@ -86,7 +89,7 @@ export const fetchStatuslogByCollected = createAsyncThunk(
     const response = await supabase
       .from("status_logs")
       .select(
-        `*,orders:order_id(customer_name,customer_address,delivery_date),employees:employee_id(name)`
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(*)`
       )
       .eq("name", "collected");
     if (response.error) {
@@ -102,7 +105,7 @@ export const fetchStatuslogsByDelivered = createAsyncThunk(
     const response = await supabase
       .from("status_logs")
       .select(
-        `*,orders:order_id(customer_name,customer_address,delivery_date),employees:employee_id(name)`
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
       )
       .eq("name", "delivered");
     if (response.error) {
@@ -118,7 +121,7 @@ export const fetchStatuslogsByReturned = createAsyncThunk(
     const response = await supabase
       .from("status_logs")
       .select(
-        `*,orders:order_id(customer_name,customer_address,delivery_date,pickup_date),employees:employee_id(name)`
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status,pickup_date),employees:employee_id(name)`
       )
       .eq("name", "returned");
     if (response.error) {
@@ -134,7 +137,7 @@ export const fetchStatuslogsByDone = createAsyncThunk(
     const response = await supabase
       .from("status_logs")
       .select(
-        `*,orders:order_id(customer_name,customer_address,delivery_date),employees:employee_id(name)`
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
       )
       .eq("name", "done");
     if (response.error) {
@@ -152,6 +155,23 @@ export const updateStatusLog = createAsyncThunk(
       .update({
         status: updatedData.status,
         finish_time: updatedData.finish_time,
+      })
+      .eq("id", updatedData.id);
+    if (error) {
+      alert(error.message);
+    }
+    return data;
+  }
+);
+
+export const updateEmployeeLog = createAsyncThunk(
+  "orderlogs/updateEmployeeLog",
+  async (updatedData) => {
+    const { data, error } = await supabase
+      .from("status_logs")
+      .update({
+        employee_id: updatedData.employee_id,
+        target_time: updatedData.target_time,
       })
       .eq("id", updatedData.id);
     if (error) {
@@ -182,6 +202,13 @@ const orderlogsSlice = createSlice({
     },
     clearStatuslogUpdateStatus: (state) => {
       state.statuslogUpdateStatus = "idle";
+    },
+    clearStatuslogByOrderIdStatus: (state) => {
+      state.statuslogByOrderIdStatus = "idle";
+    },
+
+    clearStatuslogEmployeeUpdateStatus: (state) => {
+      state.statuslogEmployeeUpdateStatus = "idle";
     },
   },
   extraReducers: {
@@ -280,6 +307,18 @@ const orderlogsSlice = createSlice({
       state.statuslogUpdateStatus = "failed";
       state.statuslogUpdateError = action.error.message;
     },
+
+    [updateEmployeeLog.pending]: (state) => {
+      state.statuslogEmployeeUpdateStatus = "loading";
+    },
+    [updateEmployeeLog.fulfilled]: (state, action) => {
+      state.statuslogEmployeeUpdateStatus = "succeeded";
+      state.statuslogUpdate = action.payload.data;
+    },
+    [updateEmployeeLog.rejected]: (state, action) => {
+      state.statuslogEmployeeUpdateStatus = "failed";
+      state.statuslogUpdateError = action.error.message;
+    },
   },
 });
 
@@ -290,6 +329,8 @@ export const {
   clearStatuslogByReturnedStatus,
   clearStatuslogByDoneStatus,
   clearStatuslogUpdateStatus,
+  clearStatuslogEmployeeUpdateStatus,
+  clearStatuslogByOrderIdStatus,
 } = orderlogsSlice.actions;
 
 export default orderlogsSlice.reducer;

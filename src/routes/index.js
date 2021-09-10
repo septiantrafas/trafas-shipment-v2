@@ -10,47 +10,101 @@ const Report = lazy(() => import("../pages/Report/Report"));
 const CreateOrder = lazy(() => import("../pages/Marketing/CreateOrder"));
 const EditOrder = lazy(() => import("../pages/Marketing/EditOrder"));
 const TrackTrace = lazy(() => import("../components/TrackAndTrace/TrackTrace"));
+const PickEmployee = lazy(() =>
+  import("../components/StatusLogs/PickEmployee")
+);
+const UpdateStatus = lazy(() =>
+  import("../components/StatusLogs/UpdateStatus")
+);
 
 const routes = [
   {
     path: "/employee",
     component: Employee,
+    roles: ["super_admin"],
   },
   {
     path: "/marketing",
     component: Order,
+    roles: ["super_admin", "admin_marketing", "staff_marketing"],
   },
   {
     path: "/marketing/new-order",
     component: CreateOrder,
+    roles: ["super_admin", "admin_marketing", "staff_marketing"],
   },
   {
     path: "/marketing/edit-order/:id",
     component: EditOrder,
+    roles: ["super_admin", "admin_marketing", "staff_marketing"],
   },
   {
     path: "/logistic/to-collect",
     component: Collect,
+    roles: ["super_admin", "admin_logistic", "staff_logistic"],
   },
   {
     path: "/logistic/to-return",
     component: Return,
+    roles: ["super_admin", "admin_logistic", "staff_logistic"],
   },
   {
     path: "/courier/to-deliver",
     component: Delivery,
+    roles: ["super_admin", "admin_courier", "staff_courier"],
   },
   {
     path: "/courier/to-pickup",
     component: Pickup,
+    roles: ["super_admin", "admin_courier", "staff_courier"],
   },
   {
     path: "/report",
     component: Report,
+    roles: [
+      "super_admin",
+      "admin_marketing",
+      "staff_marketing",
+      "admin_logistic",
+      "staff_logistic",
+      "admin_courier",
+      "staff_courier",
+    ],
   },
   {
     path: "/track-trace/:id",
     component: TrackTrace,
+    roles: [
+      "super_admin",
+      "admin_marketing",
+      "staff_marketing",
+      "admin_logistic",
+      "staff_logistic",
+      "admin_courier",
+      "staff_courier",
+    ],
+  },
+  {
+    path: "/pick-employee/:id",
+    component: PickEmployee,
+    roles: [
+      "super_admin",
+      "admin_logistic",
+      "staff_logistic",
+      "admin_courier",
+      "staff_courier",
+    ],
+  },
+  {
+    path: "/update-status/:status_name/:order_id/:id",
+    component: UpdateStatus,
+    roles: [
+      "super_admin",
+      "admin_logistic",
+      "staff_logistic",
+      "admin_courier",
+      "staff_courier",
+    ],
   },
 ];
 

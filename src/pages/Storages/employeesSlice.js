@@ -37,20 +37,18 @@ export const fetchEmployeeById = createAsyncThunk(
 
 export const createNewEmployee = createAsyncThunk(
   "employees/createNewEmployee",
-  async (newData) => {
-    const { data, error } = await supabase.auth.signUp({
-      email: newData.email,
-      password: newData.password,
+  async (data) => {
+    const { user, session, error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
     });
-    if (error) {
-      alert(error.message);
+    console.log(user);
+    data.id = user.id;
+    const response = await supabase.from("employees").insert([data]);
+    if (response.error) {
+      alert(response.error.message);
     }
-    // newData.id = data.user.id;
-    // const response = await supabase.from("employees").insert([newData]);
-    // if (response.error) {
-    //   alert(response.error.message);
-    // }
-    return data;
+    return response;
   }
 );
 

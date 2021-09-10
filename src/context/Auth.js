@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { supabase } from "../supabase";
 
 const AuthContext = React.createContext();
@@ -9,8 +8,8 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const dispatch = useDispatch();
   const [user, setUser] = useState();
+  const [userRole, setUserRole] = useState();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,6 +17,9 @@ export function AuthProvider({ children }) {
 
     setUser(session?.user ?? null);
     setLoading(false);
+    if (user) {
+      fetchUserRole(user.id);
+    }
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -28,14 +30,26 @@ export function AuthProvider({ children }) {
     return () => {
       listener?.unsubscribe();
     };
-  }, []);
+  }, [user]);
 
- 
+  const fetchUserRole = async (id) => {
+    try {
+      let { data, error } = await supabase
+        .from("employees")
+        .select(`*`)
+        .eq("id", id);
+      if (data) setUserRole(data[0]);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   const value = {
     signUp: (data) => supabase.auth.signUp(data),
     signIn: (data) => supabase.auth.signIn(data),
     signOut: () => supabase.auth.signOut(),
     user,
+    userRole,
   };
 
   return (

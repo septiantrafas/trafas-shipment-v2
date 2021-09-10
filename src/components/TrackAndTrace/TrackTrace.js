@@ -19,10 +19,19 @@ import "./style.css";
 import ReactHtmlParser from "react-html-parser";
 import { fetchStatuslogByOrderId } from "../../pages/Storages/orderlogsSlice";
 import { HollowDotsSpinner } from "react-epic-spinners";
+import { clearOrderListStatus } from "../../pages/Storages/ordersSlice";
 
-function TrackTrace({ response }) {
+function TrackTrace() {
   const dispatch = useDispatch();
+  const orderListStatus = useSelector((state) => state.orders.orderListStatus);
+
+  useEffect(() => {
+    if (orderListStatus === "succeeded") {
+      dispatch(clearOrderListStatus());
+    }
+  }, [orderListStatus, dispatch]);
   let { id } = useParams();
+  console.log(new Date().toISOString());
 
   const statuslogByOrderId = useSelector(
     (state) => state.orderlogs.statuslogByOrderId
@@ -36,12 +45,6 @@ function TrackTrace({ response }) {
       dispatch(fetchStatuslogByOrderId(id));
     }
   }, [statuslogByOrderIdStatus, dispatch]);
-
-  const [dataTable, setDataTable] = useState([]);
-
-  useEffect(() => {
-    setDataTable(statuslogByOrderId);
-  }, [statuslogByOrderId]);
 
   return (
     <>
@@ -97,7 +100,7 @@ function TrackTrace({ response }) {
                     <TableCell>
                       <span className="text-sm">
                         {data.finish_time
-                          ? new Date(data.finish_time).toLocaleString()
+                          ? new Date(data.finish_time).toUTCString()
                           : ""}
                       </span>
                     </TableCell>

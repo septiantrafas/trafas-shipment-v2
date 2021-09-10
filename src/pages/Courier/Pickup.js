@@ -35,10 +35,25 @@ import {
   Select,
 } from "@windmill/react-ui";
 import { matchSorter } from "match-sorter";
-import { fetchStatuslogsByReturned } from "../Storages/orderlogsSlice";
+import {
+  clearStatuslogByOrderIdStatus,
+  clearStatuslogByReturnedStatus,
+  fetchStatuslogsByReturned,
+} from "../Storages/orderlogsSlice";
+import { Link } from "react-router-dom";
+import { clearOrderListStatus } from "../Storages/ordersSlice";
 
 function Pickup() {
   const dispatch = useDispatch();
+
+  const orderListStatus = useSelector((state) => state.orders.orderListStatus);
+
+  useEffect(() => {
+    if (orderListStatus === "succeeded") {
+      dispatch(clearOrderListStatus());
+    }
+  }, [orderListStatus, dispatch]);
+
   const statuslogByReturned = useSelector(
     (status) => status.orderlogs.statuslogByReturned
   );
@@ -51,6 +66,16 @@ function Pickup() {
       dispatch(fetchStatuslogsByReturned());
     }
   }, [statuslogByReturnedStatus, dispatch]);
+
+  const statuslogByOrderIdStatus = useSelector(
+    (state) => state.orderlogs.statuslogByOrderIdStatus
+  );
+
+  useEffect(() => {
+    if (statuslogByOrderIdStatus === "succeeded") {
+      dispatch(clearStatuslogByOrderIdStatus());
+    }
+  }, [statuslogByOrderIdStatus, dispatch]);
 
   return (
     <>
@@ -68,6 +93,7 @@ function Pickup() {
 }
 
 function EmployeeTable({ statuslogByReturned }) {
+  const dispatch = useDispatch();
   const [tglFilterBox, setTglFilterBox] = useState(false);
   const data = React.useMemo(() => statuslogByReturned, [statuslogByReturned]);
 
@@ -111,10 +137,10 @@ function EmployeeTable({ statuslogByReturned }) {
                 <CheckIcon color="green" />
               ) : (
                 <Button
-                  onClick={() => console.log(original.id)}
                   layout="link"
                   size="icon"
-                  aria-label="Edit"
+                  tag={Link}
+                  to={`/app/update-status/delivered/${original.order_id}/${original.id}`}
                 >
                   <WarningIcon color="yellow" />
                 </Button>
@@ -129,18 +155,18 @@ function EmployeeTable({ statuslogByReturned }) {
           return (
             <div className="flex justify-start space-x-2 ">
               <Button
-                onClick={() => console.log(row.original.id)}
                 layout="link"
                 size="icon"
-                aria-label="Edit"
+                tag={Link}
+                to={`/app/track-trace/${row.original.order_id}`}
               >
                 <SearchIcon className="w-5 h-5" arial-hidden="true" />
               </Button>
               <Button
-                onClick={() => console.log(row.original.id)}
                 layout="link"
                 size="icon"
-                aria-label="Edit"
+                tag={Link}
+                to={`/app/pick-employee/${row.original.id}`}
               >
                 <PeopleIcon className="w-5 h-5" arial-hidden="true" />
               </Button>
@@ -252,8 +278,7 @@ function EmployeeTable({ statuslogByReturned }) {
         />
         <div className="flex space-x-3 self-center">
           <Button
-            // onClick={() => console.log(row.original.id)}
-
+            onClick={() => dispatch(clearStatuslogByReturnedStatus())}
             size="small"
             aria-label="Edit"
           >

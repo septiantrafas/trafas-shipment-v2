@@ -42,9 +42,18 @@ import {
   deleteReport,
   fetchReport,
 } from "../Storages/reportsSlice";
+import { clearOrderListStatus } from "../Storages/ordersSlice";
 
 function Report() {
   const dispatch = useDispatch();
+  const orderListStatus = useSelector((state) => state.orders.orderListStatus);
+
+  useEffect(() => {
+    if (orderListStatus === "succeeded") {
+      dispatch(clearOrderListStatus());
+    }
+  }, [orderListStatus, dispatch]);
+
   const reportList = useSelector((status) => status.reports.reportList);
   const reportListStatus = useSelector(
     (status) => status.reports.reportListStatus
@@ -154,10 +163,10 @@ function ReportTable({ reportList }) {
           return (
             <div className="flex justify-start space-x-2 ">
               <Button
-                onClick={() => console.log(row.original.id)}
                 layout="link"
                 size="icon"
-                aria-label="Edit"
+                tag={Link}
+                to={`/app/track-trace/${row.original.order_id}`}
               >
                 <SearchIcon className="w-5 h-5" arial-hidden="true" />
               </Button>

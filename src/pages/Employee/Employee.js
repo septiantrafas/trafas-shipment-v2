@@ -18,6 +18,10 @@ import {
   FilterIcon,
   PlusIcon,
   RefreshIcon,
+  PrevIcon,
+  StartIcon,
+  NextIcon,
+  EndIcon,
 } from "../../icons";
 import {
   Label,
@@ -161,14 +165,14 @@ function EmployeeTable({ employeeList }) {
     headerGroups,
     allColumns,
     page,
-    // canPreviousPage,
-    // canNextPage,
-    // pageOptions,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
     pageCount,
     gotoPage,
-    // nextPage,
-    // previousPage,
-    // setPageSize,
+    nextPage,
+    previousPage,
+    setPageSize,
     prepareRow,
     state,
     state: { pageIndex, pageSize },
@@ -212,13 +216,6 @@ function EmployeeTable({ employeeList }) {
         </div>
       </Label>
     );
-  }
-
-  const resultsPerPage = pageSize;
-  const totalResults = pageCount;
-
-  function onPageChangeTable(p) {
-    gotoPage(p);
   }
 
   return (
@@ -296,12 +293,52 @@ function EmployeeTable({ employeeList }) {
           </TableBody>
         </Table>
         <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
+          <div className="px-4 py-3 flex items-center justify-between">
+            <div>
+              <Button
+                size="sm"
+                layout="icon"
+                className="p-2  hover:bg-gray-700 rounded-md"
+                onClick={() => gotoPage(0)}
+                disabled={!canPreviousPage}
+              >
+                <StartIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                <PrevIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => nextPage()}
+                disabled={!canNextPage}
+              >
+                <NextIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+              >
+                <EndIcon />
+              </Button>
+            </div>
+            <span>
+              Page{" "}
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>
+            </span>
+          </div>
         </TableFooter>
       </TableContainer>
     </>

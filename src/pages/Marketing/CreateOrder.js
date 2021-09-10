@@ -237,7 +237,7 @@ function CreateOrder() {
           </Label>
           <div className="flex justify-between mt-5">
             <div>
-              <Button tag={Link} to="/app/shipment" size="small">
+              <Button tag={Link} to="/app/marketing" size="small">
                 Cancel
               </Button>
             </div>

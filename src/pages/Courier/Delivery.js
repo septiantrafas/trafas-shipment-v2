@@ -17,6 +17,10 @@ import {
   PeopleIcon,
   CheckIcon,
   WarningIcon,
+  StartIcon,
+  PrevIcon,
+  NextIcon,
+  EndIcon,
 } from "../../icons";
 import {
   Label,
@@ -28,17 +32,31 @@ import {
   TableFooter,
   TableContainer,
   Button,
-  Pagination,
   Card,
   CardBody,
   Input,
   Select,
 } from "@windmill/react-ui";
 import { matchSorter } from "match-sorter";
-import { fetchStatuslogsByDelivered } from "../Storages/orderlogsSlice";
+import {
+  clearStatuslogByDeliveredStatus,
+  clearStatuslogByOrderIdStatus,
+  fetchStatuslogsByDelivered,
+} from "../Storages/orderlogsSlice";
+import { Link } from "react-router-dom";
+import { clearOrderListStatus } from "../Storages/ordersSlice";
 
 function Delivery() {
   const dispatch = useDispatch();
+
+  const orderListStatus = useSelector((state) => state.orders.orderListStatus);
+
+  useEffect(() => {
+    if (orderListStatus === "succeeded") {
+      dispatch(clearOrderListStatus());
+    }
+  }, [orderListStatus, dispatch]);
+
   const statuslogByDelivered = useSelector(
     (status) => status.orderlogs.statuslogByDelivered
   );
@@ -51,6 +69,16 @@ function Delivery() {
       dispatch(fetchStatuslogsByDelivered());
     }
   }, [statuslogByDeliveredStatus, dispatch]);
+
+  const statuslogByOrderIdStatus = useSelector(
+    (state) => state.orderlogs.statuslogByOrderIdStatus
+  );
+
+  useEffect(() => {
+    if (statuslogByOrderIdStatus === "succeeded") {
+      dispatch(clearStatuslogByOrderIdStatus());
+    }
+  }, [statuslogByOrderIdStatus, dispatch]);
 
   return (
     <>
@@ -68,6 +96,7 @@ function Delivery() {
 }
 
 function EmployeeTable({ statuslogByDelivered }) {
+  const dispatch = useDispatch();
   const [tglFilterBox, setTglFilterBox] = useState(false);
   const data = React.useMemo(
     () => statuslogByDelivered,
@@ -114,10 +143,10 @@ function EmployeeTable({ statuslogByDelivered }) {
                 <CheckIcon color="green" />
               ) : (
                 <Button
-                  onClick={() => console.log(original.id)}
                   layout="link"
                   size="icon"
-                  aria-label="Edit"
+                  tag={Link}
+                  to={`/app/update-status/collected/${original.order_id}/${original.id}`}
                 >
                   <WarningIcon color="yellow" />
                 </Button>
@@ -132,18 +161,18 @@ function EmployeeTable({ statuslogByDelivered }) {
           return (
             <div className="flex justify-start space-x-2 ">
               <Button
-                onClick={() => console.log(row.original.id)}
                 layout="link"
                 size="icon"
-                aria-label="Edit"
+                tag={Link}
+                to={`/app/track-trace/${row.original.order_id}`}
               >
                 <SearchIcon className="w-5 h-5" arial-hidden="true" />
               </Button>
               <Button
-                onClick={() => console.log(row.original.id)}
                 layout="link"
                 size="icon"
-                aria-label="Edit"
+                tag={Link}
+                to={`/app/pick-employee/${row.original.id}`}
               >
                 <PeopleIcon className="w-5 h-5" arial-hidden="true" />
               </Button>
@@ -185,18 +214,16 @@ function EmployeeTable({ statuslogByDelivered }) {
     headerGroups,
     allColumns,
     page,
-    // canPreviousPage,
-    // canNextPage,
-    // pageOptions,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
     pageCount,
     gotoPage,
-    // nextPage,
-    // previousPage,
-    // setPageSize,
+    nextPage,
+    previousPage,
     prepareRow,
     state,
-    state: { pageIndex, pageSize },
-    // visibleColumns,
+    state: { pageIndex },
     preGlobalFilteredRows,
     setGlobalFilter,
   } = useTable(
@@ -238,13 +265,6 @@ function EmployeeTable({ statuslogByDelivered }) {
     );
   }
 
-  const resultsPerPage = pageSize;
-  const totalResults = pageCount;
-
-  function onPageChangeTable(p) {
-    gotoPage(p);
-  }
-
   return (
     <>
       <div className="flex justify-between">
@@ -255,8 +275,7 @@ function EmployeeTable({ statuslogByDelivered }) {
         />
         <div className="flex space-x-3 self-center">
           <Button
-            // onClick={() => console.log(row.original.id)}
-
+            onClick={() => dispatch(clearStatuslogByDeliveredStatus())}
             size="small"
             aria-label="Edit"
           >
@@ -312,12 +331,52 @@ function EmployeeTable({ statuslogByDelivered }) {
           </TableBody>
         </Table>
         <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
+          <div className="px-4 py-3 flex items-center justify-between">
+            <div>
+              <Button
+                size="sm"
+                layout="icon"
+                className="p-2  hover:bg-gray-700 rounded-md"
+                onClick={() => gotoPage(0)}
+                disabled={!canPreviousPage}
+              >
+                <StartIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                <PrevIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => nextPage()}
+                disabled={!canNextPage}
+              >
+                <NextIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+              >
+                <EndIcon />
+              </Button>
+            </div>
+            <span>
+              Page{" "}
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>
+            </span>
+          </div>
         </TableFooter>
       </TableContainer>
     </>

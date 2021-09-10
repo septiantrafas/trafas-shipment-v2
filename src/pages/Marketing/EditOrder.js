@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PageTitle from "../../components/Typography/PageTitle";
-import { Input, Textarea, Label, Button } from "@windmill/react-ui";
+import { Input, Textarea, Label, Button, Select } from "@windmill/react-ui";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -142,107 +142,6 @@ function EditOrder() {
                   {...register("customer_address", { required: true })}
                 />
               </Label>
-
-              <Label>Need Delivery ?</Label>
-              <div className="">
-                {orderById.to_deliver ? (
-                  <>
-                    {" "}
-                    <Label radio>
-                      <Input
-                        type="radio"
-                        value="true"
-                        {...register("to_deliver", { required: true })}
-                        checked
-                      />
-                      <span className="ml-2">Yes</span>
-                    </Label>
-                    <Label className="ml-6" radio>
-                      <Input
-                        type="radio"
-                        value="false"
-                        {...register("to_deliver", { required: true })}
-                      />
-                      <span className="ml-2">No</span>
-                    </Label>
-                  </>
-                ) : (
-                  <>
-                    <Label radio>
-                      <Input
-                        type="radio"
-                        value="true"
-                        {...register("to_deliver", { required: true })}
-                      />
-                      <span className="ml-2">Yes</span>
-                    </Label>
-                    <Label className="ml-6" radio>
-                      <Input
-                        type="radio"
-                        value="false"
-                        {...register("to_deliver", { required: true })}
-                        checked
-                      />
-                      <span className="ml-2">No</span>
-                    </Label>
-                  </>
-                )}
-              </div>
-
-              <Label>Need Pickup ?</Label>
-              <div className="">
-                {orderById.to_pickup ? (
-                  <>
-                    {" "}
-                    <Label radio>
-                      <Input
-                        type="radio"
-                        value="true"
-                        {...register("to_pickup", { required: true })}
-                        checked
-                      />
-                      <span className="ml-2">Yes</span>
-                    </Label>
-                    <Label className="ml-6" radio>
-                      <Input
-                        type="radio"
-                        value="false"
-                        {...register("to_pickup", { required: true })}
-                      />
-                      <span className="ml-2">No</span>
-                    </Label>
-                  </>
-                ) : (
-                  <>
-                    <Label radio>
-                      <Input
-                        type="radio"
-                        value="true"
-                        {...register("to_pickup", { required: true })}
-                      />
-                      <span className="ml-2">Yes</span>
-                    </Label>
-                    <Label className="ml-6" radio>
-                      <Input
-                        type="radio"
-                        value="false"
-                        {...register("to_pickup", { required: true })}
-                        checked
-                      />
-                      <span className="ml-2">No</span>
-                    </Label>
-                  </>
-                )}
-              </div>
-
-              <Label>
-                <span>Shipment Date</span>
-                <Input
-                  className="mt-1"
-                  type="datetime-local"
-                  {...register("delivery_date", { required: true })}
-                />
-              </Label>
               <Label>
                 <span>Pick Up Date</span>
                 <Input
@@ -285,6 +184,7 @@ function EditOrder() {
                 {...register("note", { required: true })}
               />
             </Label>
+
             <div className="flex justify-between mt-5">
               <div>
                 <Button tag={Link} to="/app/shipment" size="small">

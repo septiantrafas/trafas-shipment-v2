@@ -1,75 +1,182 @@
-const routes = [
+const roles = [
   {
-    path: "/app/marketing",
-    icon: "CaseIcon",
-    name: "Marketing",
-  },
-  {
-    icon: "CardsIcon",
-    name: "Logistic",
+    role: "super_admin",
     routes: [
       {
-        path: "/app/logistic/to-collect",
-        name: "Collect",
+        path: "/app/marketing",
+        icon: "CaseIcon",
+        name: "Marketing",
       },
       {
-        path: "/app/logistic/to-return",
-        name: "Return",
+        icon: "CardsIcon",
+        name: "Logistic",
+        routes: [
+          {
+            path: "/app/logistic/to-collect",
+            name: "Collect",
+          },
+          {
+            path: "/app/logistic/to-return",
+            name: "Return",
+          },
+        ],
+      },
+      {
+        icon: "GithubIcon",
+        name: "Courier",
+        routes: [
+          {
+            path: "/app/courier/to-deliver",
+            name: "Delivery",
+          },
+          {
+            path: "/app/courier/to-pickup",
+            name: "Pickup",
+          },
+        ],
+      },
+      {
+        path: "/app/report",
+        icon: "FormsIcon",
+        name: "Report",
+      },
+      {
+        path: "/app/employee",
+        icon: "PeopleIcon",
+        name: "Employee",
       },
     ],
   },
   {
-    icon: "GithubIcon",
-    name: "Courier",
+    role: "admin_marketing",
     routes: [
       {
-        path: "/app/courier/to-deliver",
-        name: "Delivery",
+        path: "/app/marketing",
+        icon: "CaseIcon",
+        name: "Marketing",
       },
-      {
-        path: "/app/courier/to-pickup",
-        name: "Pickup",
-      },
-    ],
-  },
-  {
-    path: "/app/report",
-    icon: "FormsIcon",
-    name: "Report",
-  },
-  {
-    path: "/app/employee",
-    icon: "PeopleIcon",
-    name: "Employee",
-  },
 
-  // {
-  //   icon: "PagesIcon",
-  //   name: "Pages",
-  //   routes: [
-  //     // submenu
-  //     {
-  //       path: "/login",
-  //       name: "Login",
-  //     },
-  //     {
-  //       path: "/create-account",
-  //       name: "Create account",
-  //     },
-  //     {
-  //       path: "/forgot-password",
-  //       name: "Forgot password",
-  //     },
-  //     {
-  //       path: "/app/404",
-  //       name: "404",
-  //     },
-  //     {
-  //       path: "/app/blank",
-  //       name: "Blank",
-  //     },
-  //   ],
-  // },
+      {
+        path: "/app/report",
+        icon: "FormsIcon",
+        name: "Report",
+      },
+    ],
+  },
+  {
+    role: "admin_logistic",
+    routes: [
+      {
+        icon: "CardsIcon",
+        name: "Logistic",
+        routes: [
+          {
+            path: "/app/logistic/to-collect",
+            name: "Collect",
+          },
+          {
+            path: "/app/logistic/to-return",
+            name: "Return",
+          },
+        ],
+      },
+
+      {
+        path: "/app/report",
+        icon: "FormsIcon",
+        name: "Report",
+      },
+    ],
+  },
+  {
+    role: "admin_courier",
+    routes: [
+      {
+        icon: "GithubIcon",
+        name: "Courier",
+        routes: [
+          {
+            path: "/app/courier/to-deliver",
+            name: "Delivery",
+          },
+          {
+            path: "/app/courier/to-pickup",
+            name: "Pickup",
+          },
+        ],
+      },
+      {
+        path: "/app/report",
+        icon: "FormsIcon",
+        name: "Report",
+      },
+    ],
+  },
+  {
+    role: "staff_marketing",
+    routes: [
+      {
+        path: "/app/marketing",
+        icon: "CaseIcon",
+        name: "Marketing",
+      },
+
+      {
+        path: "/app/report",
+        icon: "FormsIcon",
+        name: "Report",
+      },
+    ],
+  },
+  {
+    role: "staff_logistic",
+    routes: [
+      {
+        icon: "CardsIcon",
+        name: "Logistic",
+        routes: [
+          {
+            path: "/app/logistic/to-collect",
+            name: "Collect",
+          },
+          {
+            path: "/app/logistic/to-return",
+            name: "Return",
+          },
+        ],
+      },
+
+      {
+        path: "/app/report",
+        icon: "FormsIcon",
+        name: "Report",
+      },
+    ],
+  },
+  {
+    role: "staff_courier",
+    routes: [
+      {
+        icon: "GithubIcon",
+        name: "Courier",
+        routes: [
+          {
+            path: "/app/courier/to-deliver",
+            name: "Delivery",
+          },
+          {
+            path: "/app/courier/to-pickup",
+            name: "Pickup",
+          },
+        ],
+      },
+      {
+        path: "/app/report",
+        icon: "FormsIcon",
+        name: "Report",
+      },
+    ],
+  },
 ];
 
-export default routes;
+export default roles;

@@ -33,6 +33,11 @@ import { ReactComponent as RefreshIcon } from "./refresh.svg";
 import { ReactComponent as WarningIcon } from "./warning.svg";
 import { ReactComponent as CheckIcon } from "./check.svg";
 import { ReactComponent as NoneIcon } from "./none.svg";
+import { ReactComponent as PrevIcon } from "./prev.svg";
+import { ReactComponent as NextIcon } from "./next.svg";
+import { ReactComponent as StartIcon } from "./start.svg";
+import { ReactComponent as EndIcon } from "./end.svg";
+
 export {
   ButtonsIcon,
   CardsIcon,
@@ -69,4 +74,8 @@ export {
   WarningIcon,
   CheckIcon,
   NoneIcon,
+  PrevIcon,
+  NextIcon,
+  StartIcon,
+  EndIcon,
 };

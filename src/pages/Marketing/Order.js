@@ -17,6 +17,10 @@ import {
   FilterIcon,
   PlusIcon,
   RefreshIcon,
+  StartIcon,
+  PrevIcon,
+  NextIcon,
+  EndIcon,
 } from "../../icons";
 import {
   Label,
@@ -28,7 +32,6 @@ import {
   TableFooter,
   TableContainer,
   Button,
-  Pagination,
   Card,
   CardBody,
   Input,
@@ -38,10 +41,12 @@ import { matchSorter } from "match-sorter";
 import {
   clearOrderByIdStatus,
   clearOrderDeleteStatus,
+  clearOrderListStatus,
   deleteOrder,
   fetchOrder,
 } from "../Storages/ordersSlice";
 import { Link } from "react-router-dom";
+import { clearStatuslogByOrderIdStatus } from "../Storages/orderlogsSlice";
 
 function Order() {
   const dispatch = useDispatch();
@@ -56,6 +61,16 @@ function Order() {
   const orderListStatus = useSelector(
     (status) => status.orders.orderListStatus
   );
+
+  const statuslogByOrderIdStatus = useSelector(
+    (state) => state.orderlogs.statuslogByOrderIdStatus
+  );
+
+  useEffect(() => {
+    if (statuslogByOrderIdStatus === "succeeded") {
+      dispatch(clearStatuslogByOrderIdStatus());
+    }
+  }, [statuslogByOrderIdStatus, dispatch]);
 
   useEffect(() => {
     if (orderListStatus === "idle") {
@@ -85,8 +100,10 @@ function EmployeeTable({ orderList }) {
   const columns = React.useMemo(
     () => [
       {
-        Header: "created by",
+        Header: "Created by",
         accessor: "employees.name",
+        Filter: "",
+        filter: "",
       },
       {
         Header: "Customer",
@@ -100,24 +117,38 @@ function EmployeeTable({ orderList }) {
             </div>
           );
         },
+        Filter: "",
+        filter: "",
+      },
+      {
+        Header: "Status",
+        accessor: "status",
+        Filter: SelectColumnFilter,
+        filter: "includes",
       },
 
       {
-        Header: "to deliver",
+        Header: "delivery date",
         accessor: "delivery_date",
         Cell: ({ cell: { value } }) => {
           return new Date(value).toUTCString();
         },
-      },
-      {
-        Header: "status",
-        accessor: "status",
+        Filter: "",
+        filter: "",
       },
       {
         Header: "action",
         Cell: ({ row }) => {
           return (
             <div className="flex justify-start space-x-2 ">
+              <Button
+                layout="link"
+                size="icon"
+                tag={Link}
+                to={`/app/track-trace/${row.original.id}`}
+              >
+                <SearchIcon className="w-5 h-5" arial-hidden="true" />
+              </Button>
               <Button
                 layout="link"
                 size="icon"
@@ -138,6 +169,8 @@ function EmployeeTable({ orderList }) {
             </div>
           );
         },
+        Filter: "",
+        filter: "",
       },
     ],
     []
@@ -178,16 +211,18 @@ function EmployeeTable({ orderList }) {
     headerGroups,
     allColumns,
     page,
-    // canPreviousPage,
-    // canNextPage,
-    // pageOptions,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
     pageCount,
     gotoPage,
-    // nextPage,
-    // previousPage,
-    // setPageSize,
+    nextPage,
+    previousPage,
+    setPageSize,
     prepareRow,
     state,
+    filterValue,
+    setFilter,
     state: { pageIndex, pageSize },
     // visibleColumns,
     preGlobalFilteredRows,
@@ -231,11 +266,35 @@ function EmployeeTable({ orderList }) {
     );
   }
 
-  const resultsPerPage = pageSize;
-  const totalResults = pageCount;
+  function SelectColumnFilter({
+    column: { filterValue, setFilter, preFilteredRows, id },
+  }) {
+    // Calculate the options for filtering
+    // using the preFilteredRows
+    const options = React.useMemo(() => {
+      const options = new Set();
+      preFilteredRows.forEach((row) => {
+        options.add(row.values[id]);
+      });
+      return [...options.values()];
+    }, [id, preFilteredRows]);
 
-  function onPageChangeTable(p) {
-    gotoPage(p);
+    // Render a multi-select box
+    return (
+      <Select
+        value={filterValue}
+        onChange={(e) => {
+          setFilter(e.target.value || undefined);
+        }}
+      >
+        <option value="">All</option>
+        {options.map((option, i) => (
+          <option key={i} value={option}>
+            {option}
+          </option>
+        ))}
+      </Select>
+    );
   }
 
   return (
@@ -246,10 +305,10 @@ function EmployeeTable({ orderList }) {
           globalFilter={state.globalFilter}
           setGlobalFilter={setGlobalFilter}
         />
+
         <div className="flex space-x-3 self-center">
           <Button
-            // onClick={() => console.log(row.original.id)}
-
+            onClick={() => dispatch(clearOrderListStatus())}
             size="small"
             aria-label="Edit"
           >
@@ -278,22 +337,39 @@ function EmployeeTable({ orderList }) {
         <Table {...getTableProps()}>
           <TableHeader>
             {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <TableCell
-                    {...column.getHeaderProps(column.getSortByToggleProps())}
-                  >
-                    {column.render("Header")}
-                    <span>
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? " 🔽"
-                          : " 🔼"
-                        : ""}
-                    </span>
-                  </TableCell>
-                ))}
-              </tr>
+              <>
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column) => (
+                    <>
+                      <TableCell
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps()
+                        )}
+                      >
+                        {column.render("Header")}
+                        <span>
+                          {column.isSorted
+                            ? column.isSortedDesc
+                              ? " 🔽"
+                              : " 🔼"
+                            : ""}
+                        </span>
+                      </TableCell>
+                    </>
+                  ))}
+                </tr>
+                {tglFilterBox ? (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column) => (
+                      <>
+                        <TableCell>{column.render("Filter")}</TableCell>
+                      </>
+                    ))}
+                  </tr>
+                ) : (
+                  ""
+                )}
+              </>
             ))}
           </TableHeader>
           <TableBody {...getTableBodyProps()}>
@@ -314,12 +390,52 @@ function EmployeeTable({ orderList }) {
           </TableBody>
         </Table>
         <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
+          <div className="px-4 py-3 flex items-center justify-between">
+            <div>
+              <Button
+                size="sm"
+                layout="icon"
+                className="p-2  hover:bg-gray-700 rounded-md"
+                onClick={() => gotoPage(0)}
+                disabled={!canPreviousPage}
+              >
+                <StartIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                <PrevIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => nextPage()}
+                disabled={!canNextPage}
+              >
+                <NextIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+              >
+                <EndIcon />
+              </Button>
+            </div>
+            <span>
+              Page{" "}
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>
+            </span>
+          </div>
         </TableFooter>
       </TableContainer>
     </>
@@ -353,23 +469,6 @@ function FilterBox({ allColumns }) {
               </Label>
             </div>
           ))}
-        </div>
-        <span className=" dark:text-gray-400 text-md  font-semibold">Time</span>
-        <div className="grid mt-2 mb-4 gap-2 md:grid-cols-2 xl:grid-cols-3">
-          <Label>
-            <span>By</span>
-            <Select className="mt-1">
-              <option>Delivery</option>
-            </Select>
-          </Label>
-          <Label>
-            <span>From</span>
-            <Input className="mt-1" type="datetime-local" />
-          </Label>
-          <Label>
-            <span>To</span>
-            <Input className="mt-1" type="datetime-local" />
-          </Label>
         </div>
       </CardBody>
     </Card>

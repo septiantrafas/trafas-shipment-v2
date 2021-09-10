@@ -11,16 +11,14 @@ import {
   clearCreateEmployeeStatus,
   createNewEmployee,
 } from "../Storages/employeesSlice";
-
 import ImageLight from "../../assets/img/create-account-office.jpeg";
 import ImageDark from "../../assets/img/create-account-office-dark.jpeg";
-import { supabase } from "../../supabase";
 
-function CreateOrder() {
+function CreateAccount() {
   const dispatch = useDispatch();
 
   const createEmployeeStatus = useSelector(
-    (state) => state.orders.createEmployeeStatus
+    (state) => state.employees.createEmployeeStatus
   );
 
   const canSave = createEmployeeStatus === "idle";
@@ -38,19 +36,15 @@ function CreateOrder() {
     },
   });
 
-  const onSubmit = async (newdata) => {
-    console.log(newdata);
+  const onSubmit = async (data) => {
     if (canSave)
       try {
-        const { data, error } = await supabase.auth.signUp({
-          email: newdata.email,
-          password: newdata.password,
-        });
-        // const resultAction = await dispatch(createNewEmployee(data));
-        // unwrapResult(resultAction);
-        // if (resultAction.payload.error === null) {
-        //   toast.success("Berhasil menambahkan data!");
-        // }
+        console.log(data);
+        const resultAction = await dispatch(createNewEmployee(data));
+        unwrapResult(resultAction);
+        if (resultAction.payload.error === null) {
+          toast.success("Berhasil menambahkan data!");
+        }
       } catch (error) {
         if (error) throw toast.error("Gagal menambahkan data!");
       } finally {
@@ -149,17 +143,17 @@ function CreateOrder() {
                       </Button>
                     )}
                   </div>
-                  <hr className="my-8" />
-
-                  <p className="mt-4">
-                    <Link
-                      className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline"
-                      to="/login"
-                    >
-                      Already have an account? Login
-                    </Link>
-                  </p>
                 </form>
+                <hr className="my-8" />
+
+                <p className="mt-4">
+                  <Link
+                    className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline"
+                    to="/login"
+                  >
+                    Already have an account? Login
+                  </Link>
+                </p>
               </div>
             </main>
           </div>
@@ -169,4 +163,4 @@ function CreateOrder() {
   );
 }
 
-export default CreateOrder;
+export default CreateAccount;
