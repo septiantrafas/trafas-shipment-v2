@@ -44,6 +44,7 @@ import {
   clearOrderListStatus,
   deleteOrder,
   fetchOrder,
+  fetchOrderByEmployee,
 } from "../Storages/ordersSlice";
 import { Link } from "react-router-dom";
 import { clearStatuslogByOrderIdStatus } from "../Storages/orderlogsSlice";
@@ -51,6 +52,7 @@ import { useAuth } from "../../context/Auth";
 
 function Order() {
   const dispatch = useDispatch();
+  const { user, userRole } = useAuth();
   const orderByIdStatus = useSelector((state) => state.orders.orderByIdStatus);
   useEffect(() => {
     if (orderByIdStatus === "succeeded") {
@@ -75,9 +77,20 @@ function Order() {
 
   useEffect(() => {
     if (orderListStatus === "idle") {
-      dispatch(fetchOrder());
+      dispatch(fetchOrderByEmployee(user.id));
     }
   }, [orderListStatus, dispatch]);
+
+  useEffect(() => {
+    if (
+      (userRole?.role === "super_admin" && orderListStatus === "succeeded") ||
+      (userRole?.role === "admin_marketing" && orderListStatus === "succeeded")
+    ) {
+      dispatch(fetchOrder());
+    }
+  }, [userRole, dispatch]);
+
+  console.log(orderList);
 
   return (
     <>
@@ -99,6 +112,7 @@ function EmployeeTable({ orderList }) {
   const { userRole } = useAuth();
   const [tglFilterBox, setTglFilterBox] = useState(false);
   const data = React.useMemo(() => orderList, [orderList]);
+  console.log(data);
   const columns = React.useMemo(
     () => [
       {

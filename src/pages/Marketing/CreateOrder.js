@@ -169,11 +169,7 @@ function CreateOrder() {
             <Label>Need Pickup ?</Label>
             <div className="">
               <Label radio>
-                <Input
-                  type="radio"
-                  value="true"
-                  {...register("to_pickup", { required: true })}
-                />
+                <Input type="radio" value="true" {...register("to_pickup")} />
                 <span className="ml-2">Yes</span>
               </Label>
               <Label className="ml-6" radio>
@@ -191,7 +187,7 @@ function CreateOrder() {
               <Input
                 className="mt-1"
                 type="datetime-local"
-                {...register("delivery_date", { required: true })}
+                {...register("delivery_date")}
               />
             </Label>
             <Label>
@@ -199,7 +195,7 @@ function CreateOrder() {
               <Input
                 className="mt-1"
                 type="datetime-local"
-                {...register("pickup_date", { required: true })}
+                {...register("pickup_date")}
               />
             </Label>
           </div>
@@ -212,18 +208,19 @@ function CreateOrder() {
                 init={{
                   height: 500,
                   menubar: false,
-                  plugins: [
-                    "advlist autolink lists link image charmap print preview anchor",
-                    "searchreplace visualblocks code fullscreen",
-                    "insertdatetime media table paste code help wordcount",
-                  ],
-                  toolbar:
-                    "undo redo | formatselect | " +
-                    "bold italic backcolor | alignleft aligncenter " +
-                    "alignright alignjustify | bullist numlist outdent indent | " +
-                    "removeformat | help",
+                  file_picker_types: "image",
+
+                  // images_upload_url: "postAcceptor.php",
+                  plugins:
+                    "print preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons",
+                  imagetools_cors_hosts: ["picsum.photos"],
+                  toolbar: "undo redo | bold italic underline strikethrough | ",
+                  toolbar_sticky: true,
+                  skin: "oxide-dark",
+                  content_css: "dark",
+
                   content_style:
-                    "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                    "body { font-family:Helvetica,Arial,sans-serif; font-size:14px; resize:vertical ; ",
                 }}
               />
             </div>

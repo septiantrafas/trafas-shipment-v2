@@ -10,6 +10,7 @@ import {
   TableBody,
   TableRow,
   TableContainer,
+  Label,
 } from "@windmill/react-ui";
 import { CheckIcon } from "../../icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,7 +20,10 @@ import "./style.css";
 import ReactHtmlParser from "react-html-parser";
 import { fetchStatuslogByOrderId } from "../../pages/Storages/orderlogsSlice";
 import { HollowDotsSpinner } from "react-epic-spinners";
-import { clearOrderListStatus } from "../../pages/Storages/ordersSlice";
+import {
+  clearOrderListStatus,
+  fetchOrderById,
+} from "../../pages/Storages/ordersSlice";
 
 function TrackTrace() {
   const dispatch = useDispatch();
@@ -40,12 +44,16 @@ function TrackTrace() {
     (state) => state.orderlogs.statuslogByOrderIdStatus
   );
 
+  const orderById = useSelector((state) => state.orders.orderById);
+  const orderByIdStatus = useSelector((state) => state.orders.orderByIdStatus);
+
   useEffect(() => {
     if (statuslogByOrderIdStatus === "idle") {
       dispatch(fetchStatuslogByOrderId(id));
+      dispatch(fetchOrderById(id));
     }
   }, [statuslogByOrderIdStatus, dispatch]);
-
+  console.log(orderById);
   return (
     <>
       <PageTitle>
@@ -111,6 +119,58 @@ function TrackTrace() {
           </TableContainer>
         </>
       )}
+
+      <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800 ">
+        <div className="grid gap-6 mt-4 mb-4 md:grid-cols-2 xl:grid-cols-2"></div>
+
+        <div className="grid gap-6 mt-4 mb-4 md:grid-cols-2 xl:grid-cols-2">
+          <Label>
+            <span>SPB Number</span>
+            <div className="my-2 p-2 bg-gray-700 text-gray-300">
+              {orderById.number}
+            </div>
+          </Label>
+          <Label>
+            <span>Customer Name</span>
+            <div className="my-2 p-2 bg-gray-700 text-gray-300">
+              {orderById.customer_name}
+            </div>
+          </Label>
+
+          <Label className="col-span-2">
+            <span>Address</span>
+            <div className="my-2 p-2 bg-gray-700 text-gray-300">
+              {orderById.customer_address}
+            </div>
+          </Label>
+          <Label>
+            <span>Delivery Date</span>
+            <div className="my-2 p-2 bg-gray-700 text-gray-300">
+              {orderById.delivery_date}
+            </div>
+          </Label>
+
+          <Label>
+            <span>Pickup Date</span>
+            <div className="my-2 p-2 bg-gray-700 text-gray-300">
+              {orderById.pickup_date}
+            </div>
+          </Label>
+        </div>
+
+        <Label>
+          <span>Product List</span>
+          <div className="my-2 p-2 bg-gray-700 text-gray-300">
+            {ReactHtmlParser(orderById.product_list)}
+          </div>
+        </Label>
+        <Label>
+          <span>Note</span>
+          <div className="my-2 p-2 bg-gray-700 text-gray-300">
+            {orderById.note}
+          </div>
+        </Label>
+      </div>
     </>
   );
 }

@@ -45,6 +45,7 @@ import {
 } from "../Storages/orderlogsSlice";
 import { Link } from "react-router-dom";
 import { clearOrderListStatus } from "../Storages/ordersSlice";
+import { useAuth } from "../../context/Auth";
 
 function Collect() {
   const dispatch = useDispatch();
@@ -96,6 +97,7 @@ function Collect() {
 }
 
 function EmployeeTable({ statuslogByCollected }) {
+  const { userRole } = useAuth();
   const dispatch = useDispatch();
   const [tglFilterBox, setTglFilterBox] = useState(false);
   const data = React.useMemo(
@@ -168,14 +170,19 @@ function EmployeeTable({ statuslogByCollected }) {
               >
                 <SearchIcon className="w-5 h-5" arial-hidden="true" />
               </Button>
-              <Button
-                layout="link"
-                size="icon"
-                tag={Link}
-                to={`/app/pick-employee/${row.original.id}`}
-              >
-                <PeopleIcon className="w-5 h-5" arial-hidden="true" />
-              </Button>
+              {userRole.role === "super_admin" ||
+              userRole.role === "admin_logistic" ? (
+                <Button
+                  layout="link"
+                  size="icon"
+                  tag={Link}
+                  to={`/app/pick-employee/${row.original.id}`}
+                >
+                  <PeopleIcon className="w-5 h-5" arial-hidden="true" />
+                </Button>
+              ) : (
+                ""
+              )}
             </div>
           );
         },

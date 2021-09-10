@@ -45,6 +45,7 @@ import {
 } from "../Storages/orderlogsSlice";
 import { Link } from "react-router-dom";
 import { clearOrderListStatus } from "../Storages/ordersSlice";
+import { useAuth } from "../../context/Auth";
 
 function Pickup() {
   const dispatch = useDispatch();
@@ -97,6 +98,7 @@ function Pickup() {
 
 function EmployeeTable({ statuslogByReturned }) {
   const dispatch = useDispatch();
+  const { userRole } = useAuth();
   const [tglFilterBox, setTglFilterBox] = useState(false);
   const data = React.useMemo(() => statuslogByReturned, [statuslogByReturned]);
 
@@ -165,14 +167,19 @@ function EmployeeTable({ statuslogByReturned }) {
               >
                 <SearchIcon className="w-5 h-5" arial-hidden="true" />
               </Button>
-              <Button
-                layout="link"
-                size="icon"
-                tag={Link}
-                to={`/app/pick-employee/${row.original.id}`}
-              >
-                <PeopleIcon className="w-5 h-5" arial-hidden="true" />
-              </Button>
+              {userRole.role === "super_admin" ||
+              userRole.role === "admin_courier" ? (
+                <Button
+                  layout="link"
+                  size="icon"
+                  tag={Link}
+                  to={`/app/pick-employee/${row.original.id}`}
+                >
+                  <PeopleIcon className="w-5 h-5" arial-hidden="true" />
+                </Button>
+              ) : (
+                ""
+              )}
             </div>
           );
         },

@@ -83,6 +83,23 @@ export const fetchStatuslogByConfirmed = createAsyncThunk(
   }
 );
 
+export const fetchStatuslogByConfirmedEmployee = createAsyncThunk(
+  "orderlogs/fetchStatuslogByConfirmedEmployee",
+  async (id) => {
+    const response = await supabase
+      .from("status_logs")
+      .select(
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
+      )
+      .eq("name", "confirmed")
+      .eq("employee_id", id);
+    if (response.error) {
+      alert(response.error.message);
+    }
+    return response;
+  }
+);
+
 export const fetchStatuslogByCollected = createAsyncThunk(
   "orderlogs/fetchStatuslogByCollected",
   async () => {
@@ -92,6 +109,23 @@ export const fetchStatuslogByCollected = createAsyncThunk(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(*)`
       )
       .eq("name", "collected");
+    if (response.error) {
+      alert(response.error.message);
+    }
+    return response;
+  }
+);
+
+export const fetchStatuslogByCollectedByEmployee = createAsyncThunk(
+  "orderlogs/fetchStatuslogByCollectedByEmployee",
+  async (id) => {
+    const response = await supabase
+      .from("status_logs")
+      .select(
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(*)`
+      )
+      .eq("name", "collected")
+      .eq("id", id);
     if (response.error) {
       alert(response.error.message);
     }
@@ -115,6 +149,23 @@ export const fetchStatuslogsByDelivered = createAsyncThunk(
   }
 );
 
+export const fetchStatuslogsByDeliveredEmployee = createAsyncThunk(
+  "orderlogs/fetchStatuslogsByDeliveredEmployee",
+  async (id) => {
+    const response = await supabase
+      .from("status_logs")
+      .select(
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
+      )
+      .eq("name", "delivered")
+      .eq("employee_id", id);
+    if (response.error) {
+      alert(response.error.message);
+    }
+    return response;
+  }
+);
+
 export const fetchStatuslogsByReturned = createAsyncThunk(
   "orderlogs/fetchStatuslogsByReturned",
   async () => {
@@ -131,6 +182,23 @@ export const fetchStatuslogsByReturned = createAsyncThunk(
   }
 );
 
+export const fetchStatuslogsByReturnedEmployee = createAsyncThunk(
+  "orderlogs/fetchStatuslogsByReturnedEmployee",
+  async (id) => {
+    const response = await supabase
+      .from("status_logs")
+      .select(
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status,pickup_date),employees:employee_id(name)`
+      )
+      .eq("name", "returned")
+      .eq("employee_id", id);
+    if (response.error) {
+      alert(response.error.message);
+    }
+    return response;
+  }
+);
+
 export const fetchStatuslogsByDone = createAsyncThunk(
   "orderlogs/fetchStatuslogsByDone",
   async () => {
@@ -140,6 +208,23 @@ export const fetchStatuslogsByDone = createAsyncThunk(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
       )
       .eq("name", "done");
+    if (response.error) {
+      alert(response.error.message);
+    }
+    return response;
+  }
+);
+
+export const fetchStatuslogsByDoneEmployee = createAsyncThunk(
+  "orderlogs/fetchStatuslogsByDoneEmployee",
+  async (id) => {
+    const response = await supabase
+      .from("status_logs")
+      .select(
+        `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
+      )
+      .eq("name", "done")
+      .eq("employee_id", id);
     if (response.error) {
       alert(response.error.message);
     }
@@ -248,6 +333,18 @@ const orderlogsSlice = createSlice({
       state.statuslogByConfirmedError = action.error.message;
     },
 
+    [fetchStatuslogByConfirmedEmployee.pending]: (state) => {
+      state.statuslogByConfirmedStatus = "loading";
+    },
+    [fetchStatuslogByConfirmedEmployee.fulfilled]: (state, action) => {
+      state.statuslogByConfirmedStatus = "succeeded";
+      state.statuslogByConfirmed = action.payload.data;
+    },
+    [fetchStatuslogByConfirmedEmployee.rejected]: (state, action) => {
+      state.statuslogByConfirmedStatus = "failed";
+      state.statuslogByConfirmedError = action.error.message;
+    },
+
     [fetchStatuslogByCollected.pending]: (state) => {
       state.statuslogByCollectedStatus = "loading";
     },
@@ -256,6 +353,18 @@ const orderlogsSlice = createSlice({
       state.statuslogByCollected = action.payload.data;
     },
     [fetchStatuslogByCollected.rejected]: (state, action) => {
+      state.statuslogByCollectedStatus = "failed";
+      state.statuslogByCollectedError = action.error.message;
+    },
+
+    [fetchStatuslogByCollectedByEmployee.pending]: (state) => {
+      state.statuslogByCollectedStatus = "loading";
+    },
+    [fetchStatuslogByCollectedByEmployee.fulfilled]: (state, action) => {
+      state.statuslogByCollectedStatus = "succeeded";
+      state.statuslogByCollected = action.payload.data;
+    },
+    [fetchStatuslogByCollectedByEmployee.rejected]: (state, action) => {
       state.statuslogByCollectedStatus = "failed";
       state.statuslogByCollectedError = action.error.message;
     },
@@ -272,6 +381,18 @@ const orderlogsSlice = createSlice({
       state.statuslogByDeliveredError = action.error.message;
     },
 
+    [fetchStatuslogsByDeliveredEmployee.pending]: (state) => {
+      state.statuslogByDeliveredStatus = "loading";
+    },
+    [fetchStatuslogsByDeliveredEmployee.fulfilled]: (state, action) => {
+      state.statuslogByDeliveredStatus = "succeeded";
+      state.statuslogByDelivered = action.payload.data;
+    },
+    [fetchStatuslogsByDeliveredEmployee.rejected]: (state, action) => {
+      state.statuslogByDeliveredStatus = "failed";
+      state.statuslogByDeliveredError = action.error.message;
+    },
+
     [fetchStatuslogsByReturned.pending]: (state) => {
       state.statuslogByReturnedStatus = "loading";
     },
@@ -284,6 +405,18 @@ const orderlogsSlice = createSlice({
       state.statuslogByReturnedError = action.error.message;
     },
 
+    [fetchStatuslogsByReturnedEmployee.pending]: (state) => {
+      state.statuslogByReturnedStatus = "loading";
+    },
+    [fetchStatuslogsByReturnedEmployee.fulfilled]: (state, action) => {
+      state.statuslogByReturnedStatus = "succeeded";
+      state.statuslogByReturned = action.payload.data;
+    },
+    [fetchStatuslogsByReturnedEmployee.rejected]: (state, action) => {
+      state.statuslogByReturnedStatus = "failed";
+      state.statuslogByReturnedError = action.error.message;
+    },
+
     [fetchStatuslogsByDone.pending]: (state) => {
       state.statuslogByDoneStatus = "loading";
     },
@@ -292,6 +425,18 @@ const orderlogsSlice = createSlice({
       state.statuslogByDone = action.payload.data;
     },
     [fetchStatuslogsByDone.rejected]: (state, action) => {
+      state.statuslogByDoneStatus = "failed";
+      state.statuslogByDoneError = action.error.message;
+    },
+
+    [fetchStatuslogsByDoneEmployee.pending]: (state) => {
+      state.statuslogByDoneStatus = "loading";
+    },
+    [fetchStatuslogsByDoneEmployee.fulfilled]: (state, action) => {
+      state.statuslogByDoneStatus = "succeeded";
+      state.statuslogByDone = action.payload.data;
+    },
+    [fetchStatuslogsByDoneEmployee.rejected]: (state, action) => {
       state.statuslogByDoneStatus = "failed";
       state.statuslogByDoneError = action.error.message;
     },

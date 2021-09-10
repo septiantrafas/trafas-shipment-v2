@@ -29,6 +29,20 @@ export const fetchOrder = createAsyncThunk("orders/fetchOrder", async () => {
   return response;
 });
 
+export const fetchOrderByEmployee = createAsyncThunk(
+  "orders/fetchOrderByEmployee",
+  async (id) => {
+    const response = await supabase
+      .from("orders")
+      .select(`*,employees:employee_id(name)`)
+      .eq("employee_id", id);
+    if (response.error) {
+      alert(response.error.message);
+    }
+    return response;
+  }
+);
+
 export const fetchOrderById = createAsyncThunk(
   "orders/fetchOrderById",
   async (id) => {
@@ -140,6 +154,19 @@ const ordersSlice = createSlice({
       state.orderListStatus = "failed";
       state.orderListError = action.error.message;
     },
+
+    [fetchOrderByEmployee.pending]: (state) => {
+      state.orderListStatus = "loading";
+    },
+    [fetchOrderByEmployee.fulfilled]: (state, action) => {
+      state.orderListStatus = "succeeded";
+      state.orderList = action.payload.data;
+    },
+    [fetchOrderByEmployee.rejected]: (state, action) => {
+      state.orderListStatus = "failed";
+      state.orderListError = action.error.message;
+    },
+
     [fetchOrderById.pending]: (state) => {
       state.orderByIdStatus = "loading";
     },

@@ -122,7 +122,7 @@ function EditStatusCollect() {
                   {...register("employee_id", { required: true })}
                 >
                   {employeeList.map((emp) => {
-                    return <option value={emp.id}>{emp.email}</option>;
+                    return <option value={emp.id}>{emp.name}</option>;
                   })}
                 </Select>
               </Label>
