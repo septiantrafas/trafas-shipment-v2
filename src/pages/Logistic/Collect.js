@@ -444,23 +444,6 @@ function FilterBox({ allColumns }) {
             </div>
           ))}
         </div>
-        <span className=" dark:text-gray-400 text-md  font-semibold">Time</span>
-        <div className="grid mt-2 mb-4 gap-2 md:grid-cols-2 xl:grid-cols-3">
-          <Label>
-            <span>By</span>
-            <Select className="mt-1">
-              <option>Delivery</option>
-            </Select>
-          </Label>
-          <Label>
-            <span>From</span>
-            <Input className="mt-1" type="datetime-local" />
-          </Label>
-          <Label>
-            <span>To</span>
-            <Input className="mt-1" type="datetime-local" />
-          </Label>
-        </div>
       </CardBody>
     </Card>
   );

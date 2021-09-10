@@ -47,6 +47,7 @@ import {
 } from "../Storages/ordersSlice";
 import { Link } from "react-router-dom";
 import { clearStatuslogByOrderIdStatus } from "../Storages/orderlogsSlice";
+import { useAuth } from "../../context/Auth";
 
 function Order() {
   const dispatch = useDispatch();
@@ -95,6 +96,7 @@ function Order() {
 
 function EmployeeTable({ orderList }) {
   const dispatch = useDispatch();
+  const { userRole } = useAuth();
   const [tglFilterBox, setTglFilterBox] = useState(false);
   const data = React.useMemo(() => orderList, [orderList]);
   const columns = React.useMemo(
@@ -158,14 +160,18 @@ function EmployeeTable({ orderList }) {
               >
                 <EditIcon className="w-5 h-5" arial-hidden="true" />
               </Button>
-              <Button
-                onClick={() => removeOrder(row.original.id)}
-                layout="link"
-                size="icon"
-                aria-label="Delete"
-              >
-                <TrashIcon className="w-5 h-5" arial-hidden="true" />
-              </Button>
+              {userRole?.role === "super_admin" ? (
+                <Button
+                  onClick={() => removeOrder(row.original.id)}
+                  layout="link"
+                  size="icon"
+                  aria-label="Delete"
+                >
+                  <TrashIcon className="w-5 h-5" arial-hidden="true" />
+                </Button>
+              ) : (
+                ""
+              )}
             </div>
           );
         },
@@ -305,7 +311,6 @@ function EmployeeTable({ orderList }) {
           globalFilter={state.globalFilter}
           setGlobalFilter={setGlobalFilter}
         />
-
         <div className="flex space-x-3 self-center">
           <Button
             onClick={() => dispatch(clearOrderListStatus())}
@@ -322,7 +327,6 @@ function EmployeeTable({ orderList }) {
             <FilterIcon className="w-5 h-5" arial-hidden="true" />
           </Button>
           <Button
-            // onClick={() => console.log(row.original.id)}
             tag={Link}
             to="/app/marketing/new-order"
             size="small"

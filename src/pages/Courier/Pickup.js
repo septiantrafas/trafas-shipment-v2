@@ -17,6 +17,10 @@ import {
   PeopleIcon,
   CheckIcon,
   WarningIcon,
+  StartIcon,
+  PrevIcon,
+  NextIcon,
+  EndIcon,
 } from "../../icons";
 import {
   Label,
@@ -28,7 +32,6 @@ import {
   TableFooter,
   TableContainer,
   Button,
-  Pagination,
   Card,
   CardBody,
   Input,
@@ -208,14 +211,14 @@ function EmployeeTable({ statuslogByReturned }) {
     headerGroups,
     allColumns,
     page,
-    // canPreviousPage,
-    // canNextPage,
-    // pageOptions,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
     pageCount,
     gotoPage,
-    // nextPage,
-    // previousPage,
-    // setPageSize,
+    nextPage,
+    previousPage,
+    setPageSize,
     prepareRow,
     state,
     state: { pageIndex, pageSize },
@@ -261,11 +264,35 @@ function EmployeeTable({ statuslogByReturned }) {
     );
   }
 
-  const resultsPerPage = pageSize;
-  const totalResults = pageCount;
+  function SelectColumnFilter({
+    column: { filterValue, setFilter, preFilteredRows, id },
+  }) {
+    // Calculate the options for filtering
+    // using the preFilteredRows
+    const options = React.useMemo(() => {
+      const options = new Set();
+      preFilteredRows.forEach((row) => {
+        options.add(row.values[id]);
+      });
+      return [...options.values()];
+    }, [id, preFilteredRows]);
 
-  function onPageChangeTable(p) {
-    gotoPage(p);
+    // Render a multi-select box
+    return (
+      <Select
+        value={filterValue}
+        onChange={(e) => {
+          setFilter(e.target.value || undefined);
+        }}
+      >
+        <option value="">All</option>
+        {options.map((option, i) => (
+          <option key={i} value={option}>
+            {option}
+          </option>
+        ))}
+      </Select>
+    );
   }
 
   return (
@@ -334,12 +361,52 @@ function EmployeeTable({ statuslogByReturned }) {
           </TableBody>
         </Table>
         <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
+          <div className="px-4 py-3 flex items-center justify-between">
+            <div>
+              <Button
+                size="sm"
+                layout="icon"
+                className="p-2  hover:bg-gray-700 rounded-md"
+                onClick={() => gotoPage(0)}
+                disabled={!canPreviousPage}
+              >
+                <StartIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                <PrevIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => nextPage()}
+                disabled={!canNextPage}
+              >
+                <NextIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+              >
+                <EndIcon />
+              </Button>
+            </div>
+            <span>
+              Page{" "}
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>
+            </span>
+          </div>
         </TableFooter>
       </TableContainer>
     </>
@@ -373,23 +440,6 @@ function FilterBox({ allColumns }) {
               </Label>
             </div>
           ))}
-        </div>
-        <span className=" dark:text-gray-400 text-md  font-semibold">Time</span>
-        <div className="grid mt-2 mb-4 gap-2 md:grid-cols-2 xl:grid-cols-3">
-          <Label>
-            <span>By</span>
-            <Select className="mt-1">
-              <option>Delivery</option>
-            </Select>
-          </Label>
-          <Label>
-            <span>From</span>
-            <Input className="mt-1" type="datetime-local" />
-          </Label>
-          <Label>
-            <span>To</span>
-            <Input className="mt-1" type="datetime-local" />
-          </Label>
         </div>
       </CardBody>
     </Card>

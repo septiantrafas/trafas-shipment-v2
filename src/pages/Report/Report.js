@@ -12,11 +12,10 @@ import {
 } from "react-table";
 import {
   SearchIcon,
-  EditIcon,
-  TrashIcon,
-  FilterIcon,
-  PlusIcon,
-  RefreshIcon,
+  StartIcon,
+  PrevIcon,
+  NextIcon,
+  EndIcon,
   NoneIcon,
 } from "../../icons";
 import {
@@ -46,6 +45,7 @@ import { clearOrderListStatus } from "../Storages/ordersSlice";
 
 function Report() {
   const dispatch = useDispatch();
+
   const orderListStatus = useSelector((state) => state.orders.orderListStatus);
 
   useEffect(() => {
@@ -105,6 +105,9 @@ function ReportTable({ reportList }) {
       {
         Header: "confirmed by",
         accessor: "confirmed.name",
+        Cell: ({ cell: { value } }) => {
+          return <>{value ? value : <NoneIcon />}</>;
+        },
       },
       {
         Header: "confirmed at",
@@ -116,6 +119,9 @@ function ReportTable({ reportList }) {
       {
         Header: "collected by",
         accessor: "collected.name",
+        Cell: ({ cell: { value } }) => {
+          return <>{value ? value : <NoneIcon />}</>;
+        },
       },
       {
         Header: "collected at",
@@ -127,6 +133,9 @@ function ReportTable({ reportList }) {
       {
         Header: "delivered by",
         accessor: "delivered.name",
+        Cell: ({ cell: { value } }) => {
+          return <>{value ? value : <NoneIcon />}</>;
+        },
       },
       {
         Header: "delivered at",
@@ -138,6 +147,9 @@ function ReportTable({ reportList }) {
       {
         Header: "returned by",
         accessor: "returned.name",
+        Cell: ({ cell: { value } }) => {
+          return <>{value ? value : <NoneIcon />}</>;
+        },
       },
       {
         Header: "returned at",
@@ -149,6 +161,9 @@ function ReportTable({ reportList }) {
       {
         Header: "done by",
         accessor: "done.name",
+        Cell: ({ cell: { value } }) => {
+          return <>{value ? value : <NoneIcon />}</>;
+        },
       },
       {
         Header: "done at",
@@ -213,14 +228,14 @@ function ReportTable({ reportList }) {
     headerGroups,
     allColumns,
     page,
-    // canPreviousPage,
-    // canNextPage,
-    // pageOptions,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
     pageCount,
     gotoPage,
-    // nextPage,
-    // previousPage,
-    // setPageSize,
+    nextPage,
+    previousPage,
+    setPageSize,
     prepareRow,
     state,
     state: { pageIndex, pageSize },
@@ -323,12 +338,52 @@ function ReportTable({ reportList }) {
           </TableBody>
         </Table>
         <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
+          <div className="px-4 py-3 flex items-center justify-between">
+            <div>
+              <Button
+                size="sm"
+                layout="icon"
+                className="p-2  hover:bg-gray-700 rounded-md"
+                onClick={() => gotoPage(0)}
+                disabled={!canPreviousPage}
+              >
+                <StartIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                <PrevIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => nextPage()}
+                disabled={!canNextPage}
+              >
+                <NextIcon />
+              </Button>
+              <Button
+                className="p-2  hover:bg-gray-700 rounded-md"
+                size="sm"
+                layout="icon"
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+              >
+                <EndIcon />
+              </Button>
+            </div>
+            <span>
+              Page{" "}
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>
+            </span>
+          </div>
         </TableFooter>
       </TableContainer>
     </>

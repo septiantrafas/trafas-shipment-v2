@@ -68,9 +68,11 @@ export const updateOrder = createAsyncThunk(
     const { data, error } = await supabase
       .from("orders")
       .update({
-        name: updatedData.name,
-        phone: updatedData.phone,
-        role: updatedData.role,
+        customer_name: updatedData.customer_name,
+        customer_address: updatedData.customer_address,
+        pickup_date: updatedData.pickup_date,
+        product_list: updatedData.product_list,
+        note: updatedData.note,
       })
       .eq("id", updatedData.id);
     if (error) {
