@@ -16,6 +16,7 @@ const PickEmployee = lazy(() =>
 const UpdateStatus = lazy(() =>
   import("../components/StatusLogs/UpdateStatus")
 );
+const EditPassword = lazy(() => import("../pages/Authentication/EditPassword"));
 
 const routes = [
   {
@@ -72,6 +73,19 @@ const routes = [
     ],
   },
   {
+    path: "/update-password/:id",
+    component: EditPassword,
+    roles: [
+      "super_admin",
+      "admin_marketing",
+      "staff_marketing",
+      "admin_logistic",
+      "staff_logistic",
+      "admin_courier",
+      "staff_courier",
+    ],
+  },
+  {
     path: "/track-trace/:id",
     component: TrackTrace,
     roles: [
@@ -85,7 +99,7 @@ const routes = [
     ],
   },
   {
-    path: "/pick-employee/:id",
+    path: "/pick-employee/:id/:first_role/:sec_role",
     component: PickEmployee,
     roles: [
       "super_admin",

@@ -107,12 +107,15 @@ function Header() {
               isOpen={isProfileMenuOpen}
               onClose={() => setIsProfileMenuOpen(false)}
             >
-              <DropdownItem tag="a" href="#">
+              <DropdownItem
+                tag="a"
+                href={`/app/update-password/${user?.id ?? null}`}
+              >
                 <OutlinePersonIcon
                   className="w-4 h-4 mr-3"
                   aria-hidden="true"
                 />
-                <span>Profile</span>
+                <span>Update Password</span>
               </DropdownItem>
               {/* <DropdownItem tag="a" href="#">
                 <OutlineCogIcon className="w-4 h-4 mr-3" aria-hidden="true" />

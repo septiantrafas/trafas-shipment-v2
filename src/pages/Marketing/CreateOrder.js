@@ -14,6 +14,13 @@ import {
   clearOrderListStatus,
   createNewOrder,
 } from "../Storages/ordersSlice";
+import {
+  clearStatuslogByCollectedStatus,
+  clearStatuslogByDeliveredStatus,
+  clearStatuslogByDoneStatus,
+  clearStatuslogByReturnedStatus,
+} from "../Storages/orderlogsSlice";
+import { clearReportListStatus } from "../Storages/reportsSlice";
 
 function CreateOrder() {
   const dispatch = useDispatch();
@@ -22,6 +29,11 @@ function CreateOrder() {
   useEffect(() => {
     if (orderListStatus === "succeeded") {
       dispatch(clearOrderListStatus());
+      dispatch(clearStatuslogByCollectedStatus());
+      dispatch(clearStatuslogByDoneStatus());
+      dispatch(clearStatuslogByReturnedStatus());
+      dispatch(clearStatuslogByDeliveredStatus());
+      dispatch(clearReportListStatus());
     }
   }, [orderListStatus, dispatch]);
 

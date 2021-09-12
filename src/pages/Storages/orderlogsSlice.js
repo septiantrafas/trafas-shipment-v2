@@ -125,7 +125,7 @@ export const fetchStatuslogByCollectedByEmployee = createAsyncThunk(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(*)`
       )
       .eq("name", "collected")
-      .eq("id", id);
+      .eq("employee_id", id);
     if (response.error) {
       alert(response.error.message);
     }

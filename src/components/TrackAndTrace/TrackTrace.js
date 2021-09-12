@@ -108,7 +108,7 @@ function TrackTrace() {
                     <TableCell>
                       <span className="text-sm">
                         {data.finish_time
-                          ? new Date(data.finish_time).toUTCString()
+                          ? new Date(data.finish_time).toLocaleString()
                           : ""}
                       </span>
                     </TableCell>

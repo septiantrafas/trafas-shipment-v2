@@ -23,6 +23,8 @@ import {
 function EditStatusCollect() {
   let history = useHistory();
   let { id } = useParams();
+  let { first_role } = useParams();
+  let { sec_role } = useParams();
   const dispatch = useDispatch();
 
   const statuslogByCollectedStatus = useSelector(
@@ -74,6 +76,7 @@ function EditStatusCollect() {
       } finally {
         dispatch(clearStatuslogEmployeeUpdateStatus());
         dispatch(clearEmployeeList());
+        history.push("/app");
       }
   };
 
@@ -121,9 +124,18 @@ function EditStatusCollect() {
                   className="mt-1"
                   {...register("employee_id", { required: true })}
                 >
-                  {employeeList.map((emp) => {
-                    return <option value={emp.id}>{emp.name}</option>;
-                  })}
+                  {employeeList
+                    .filter(
+                      (data) =>
+                        data.role === first_role || data.role === sec_role
+                    )
+                    .map((emp) => {
+                      return (
+                        <option value={emp.id}>
+                          {emp.name} [{emp.role}]
+                        </option>
+                      );
+                    })}
                 </Select>
               </Label>
               <Label>

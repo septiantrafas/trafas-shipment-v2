@@ -17,6 +17,13 @@ import {
   fetchOrderById,
   updateOrder,
 } from "../Storages/ordersSlice";
+import {
+  clearStatuslogByCollectedStatus,
+  clearStatuslogByDeliveredStatus,
+  clearStatuslogByDoneStatus,
+  clearStatuslogByReturnedStatus,
+} from "../Storages/orderlogsSlice";
+import { clearReportListStatus } from "../Storages/reportsSlice";
 
 function EditOrder() {
   let history = useHistory();
@@ -49,6 +56,11 @@ function EditOrder() {
   useEffect(() => {
     if (orderListStatus === "succeeded") {
       dispatch(clearOrderListStatus());
+      dispatch(clearStatuslogByCollectedStatus());
+      dispatch(clearStatuslogByDoneStatus());
+      dispatch(clearStatuslogByReturnedStatus());
+      dispatch(clearStatuslogByDeliveredStatus());
+      dispatch(clearReportListStatus());
     }
   }, [orderListStatus, dispatch]);
 
@@ -189,7 +201,7 @@ function EditOrder() {
 
             <div className="flex justify-between mt-5">
               <div>
-                <Button tag={Link} to="/app/shipment" size="small">
+                <Button tag={Link} to="/app/marketing" size="small">
                   Cancel
                 </Button>
               </div>

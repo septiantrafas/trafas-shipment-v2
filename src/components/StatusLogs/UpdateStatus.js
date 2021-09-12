@@ -12,12 +12,16 @@ import {
 } from "react-epic-spinners";
 import {
   clearStatuslogByCollectedStatus,
+  clearStatuslogByDeliveredStatus,
+  clearStatuslogByDoneStatus,
   clearStatuslogByOrderIdStatus,
+  clearStatuslogByReturnedStatus,
   clearStatuslogEmployeeUpdateStatus,
   fetchStatuslogByOrderId,
   updateStatusLog,
 } from "../../pages/Storages/orderlogsSlice";
 import {
+  clearOrderByIdStatus,
   clearOrderListStatus,
   updateDataByCollectedStatus,
 } from "../../pages/Storages/ordersSlice";
@@ -30,36 +34,77 @@ import { CheckIcon } from "../../icons";
 import { data } from "browserslist";
 import { Editor } from "@tinymce/tinymce-react";
 import SectionTitle from "../Typography/SectionTitle";
+import { clearReportListStatus } from "../../pages/Storages/reportsSlice";
 
 function EditStatusCollect() {
   let history = useHistory();
+  const dispatch = useDispatch();
 
   const [product_list, setProduct_list] = useState("");
   const [statuslogByOrderIdData, setStatuslogByOrderIdData] = useState("");
   const [statuslogState, setStatuslogState] = useState("");
+
   let { id } = useParams();
   let { order_id } = useParams();
   let { status_name } = useParams();
-  const dispatch = useDispatch();
 
   const orderListStatus = useSelector((state) => state.orders.orderListStatus);
+  const orderByIdStatus = useSelector((state) => state.orders.orderByIdStatus);
+  const statuslogByOrderIdStatus = useSelector(
+    (state) => state.orderlogs.statuslogByOrderIdStatus
+  );
+  const statuslogByCollectedStatus = useSelector(
+    (state) => state.orderlogs.statuslogByCollectedStatus
+  );
+  const statuslogByDoneStatus = useSelector(
+    (state) => state.orderlogs.statuslogByDoneStatus
+  );
+  const statuslogByReturnedStatus = useSelector(
+    (state) => state.orderlogs.statuslogByReturnedStatus
+  );
+  const statuslogByDeliveredStatus = useSelector(
+    (state) => state.orderlogs.statuslogByDeliveredStatus
+  );
+  const reportListStatus = useSelector(
+    (state) => state.reports.reportListStatus
+  );
 
   useEffect(() => {
     if (orderListStatus === "succeeded") {
       dispatch(clearOrderListStatus());
     }
   }, [orderListStatus, dispatch]);
-
-  const statuslogByCollectedStatus = useSelector(
-    (status) => status.orderlogs.statuslogByCollectedStatus
-  );
-
   useEffect(() => {
     if (statuslogByCollectedStatus === "succeeded") {
       dispatch(clearStatuslogByCollectedStatus());
       dispatch(fetchStatuslogByOrderId(order_id));
     }
   }, [statuslogByCollectedStatus, dispatch]);
+  useEffect(() => {
+    if (orderByIdStatus === "succeeded") {
+      dispatch(clearOrderByIdStatus());
+    }
+  }, [orderByIdStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByReturnedStatus === "succeeded") {
+      dispatch(clearStatuslogByReturnedStatus());
+    }
+  }, [statuslogByReturnedStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByDeliveredStatus === "succeeded") {
+      dispatch(clearStatuslogByDeliveredStatus());
+    }
+  }, [statuslogByDeliveredStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByDoneStatus === "succeeded") {
+      dispatch(clearStatuslogByDoneStatus());
+    }
+  }, [statuslogByDoneStatus, dispatch]);
+  useEffect(() => {
+    if (reportListStatus === "succeeded") {
+      dispatch(clearReportListStatus());
+    }
+  }, [reportListStatus, dispatch]);
 
   const statuslogUpdateStatus = useSelector(
     (state) => state.orderlogs.statuslogUpdateStatus
@@ -68,10 +113,6 @@ function EditStatusCollect() {
   const statuslogByOrderId = useSelector(
     (state) => state.orderlogs.statuslogByOrderId
   );
-  const statuslogByOrderIdStatus = useSelector(
-    (state) => state.orderlogs.statuslogByOrderIdStatus
-  );
-
   useEffect(() => {
     if (statuslogByOrderIdStatus === "idle") {
       dispatch(fetchStatuslogByOrderId(order_id));
@@ -83,11 +124,23 @@ function EditStatusCollect() {
       setStatuslogByOrderIdData(
         statuslogByOrderId?.find((data) => data.id === id) ?? ""
       );
-      setStatuslogState(
-        statuslogByOrderId?.find((data) => data.name === status_name) ?? ""
-      );
+      if (statuslogByOrderId.length === 3) {
+        setStatuslogState(
+          statuslogByOrderId?.find((data) => data.name === "confirmed") ?? ""
+        );
+      } else if (statuslogByOrderId.length === 4) {
+        setStatuslogState(
+          statuslogByOrderId?.find((data) => data.name === "delivered") ?? ""
+        );
+      } else {
+        setStatuslogState(
+          statuslogByOrderId?.find((data) => data.name === status_name) ?? ""
+        );
+      }
     }
   }, [statuslogByOrderIdStatus, id, dispatch]);
+
+  console.log(statuslogByOrderId);
 
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {

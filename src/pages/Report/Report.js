@@ -28,7 +28,6 @@ import {
   TableFooter,
   TableContainer,
   Button,
-  Pagination,
   Card,
   CardBody,
   Input,
@@ -36,23 +35,75 @@ import {
 } from "@windmill/react-ui";
 import { matchSorter } from "match-sorter";
 import { Link } from "react-router-dom";
+import { clearReportListStatus, fetchReport } from "../Storages/reportsSlice";
 import {
-  clearReportDeleteStatus,
-  deleteReport,
-  fetchReport,
-} from "../Storages/reportsSlice";
-import { clearOrderListStatus } from "../Storages/ordersSlice";
+  clearOrderByIdStatus,
+  clearOrderListStatus,
+} from "../Storages/ordersSlice";
+import {
+  clearStatuslogByCollectedStatus,
+  clearStatuslogByDeliveredStatus,
+  clearStatuslogByDoneStatus,
+  clearStatuslogByOrderIdStatus,
+  clearStatuslogByReturnedStatus,
+} from "../Storages/orderlogsSlice";
 
 function Report() {
   const dispatch = useDispatch();
-
+  const orderByIdStatus = useSelector((state) => state.orders.orderByIdStatus);
   const orderListStatus = useSelector((state) => state.orders.orderListStatus);
+  const statuslogByOrderIdStatus = useSelector(
+    (state) => state.orderlogs.statuslogByOrderIdStatus
+  );
+  const statuslogByCollectedStatus = useSelector(
+    (state) => state.orderlogs.statuslogByCollectedStatus
+  );
+  const statuslogByDoneStatus = useSelector(
+    (state) => state.orderlogs.statuslogByDoneStatus
+  );
+  const statuslogByReturnedStatus = useSelector(
+    (state) => state.orderlogs.statuslogByReturnedStatus
+  );
+  const statuslogByDeliveredStatus = useSelector(
+    (state) => state.orderlogs.statuslogByDeliveredStatus
+  );
 
   useEffect(() => {
     if (orderListStatus === "succeeded") {
       dispatch(clearOrderListStatus());
     }
   }, [orderListStatus, dispatch]);
+  useEffect(() => {
+    if (orderByIdStatus === "succeeded") {
+      dispatch(clearOrderByIdStatus());
+    }
+  }, [orderByIdStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByCollectedStatus === "succeeded") {
+      dispatch(clearStatuslogByCollectedStatus());
+    }
+  }, [statuslogByCollectedStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByReturnedStatus === "succeeded") {
+      dispatch(clearStatuslogByReturnedStatus());
+    }
+  }, [statuslogByReturnedStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByDeliveredStatus === "succeeded") {
+      dispatch(clearStatuslogByDeliveredStatus());
+    }
+  }, [statuslogByDeliveredStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByDoneStatus === "succeeded") {
+      dispatch(clearStatuslogByDoneStatus());
+    }
+  }, [statuslogByDoneStatus, dispatch]);
+
+  useEffect(() => {
+    if (statuslogByOrderIdStatus === "succeeded") {
+      dispatch(clearStatuslogByOrderIdStatus());
+    }
+  }, [statuslogByOrderIdStatus, dispatch]);
 
   const reportList = useSelector((status) => status.reports.reportList);
   const reportListStatus = useSelector(
@@ -74,14 +125,12 @@ function Report() {
           <HollowDotsSpinner className="self-center" color="red" size="8" />
         ) : null}
       </div>
-
       <ReportTable reportList={reportList} />
     </>
   );
 }
 
 function ReportTable({ reportList }) {
-  const dispatch = useDispatch();
   const [tglFilterBox, setTglFilterBox] = useState(false);
   const data = React.useMemo(() => reportList, [reportList]);
   const columns = React.useMemo(
@@ -113,7 +162,7 @@ function ReportTable({ reportList }) {
         Header: "confirmed at",
         accessor: "orders.created_at",
         Cell: ({ cell: { value } }) => {
-          return <>{value ? new Date(value).toUTCString() : <NoneIcon />}</>;
+          return <>{value ? new Date(value).toLocaleString() : <NoneIcon />}</>;
         },
       },
       {
@@ -127,7 +176,7 @@ function ReportTable({ reportList }) {
         Header: "collected at",
         accessor: "collected_date",
         Cell: ({ cell: { value } }) => {
-          return <>{value ? new Date(value).toUTCString() : <NoneIcon />}</>;
+          return <>{value ? new Date(value).toLocaleString() : <NoneIcon />}</>;
         },
       },
       {
@@ -141,7 +190,7 @@ function ReportTable({ reportList }) {
         Header: "delivered at",
         accessor: "delivered_date",
         Cell: ({ cell: { value } }) => {
-          return <>{value ? new Date(value).toUTCString() : <NoneIcon />}</>;
+          return <>{value ? new Date(value).toLocaleString() : <NoneIcon />}</>;
         },
       },
       {
@@ -155,7 +204,7 @@ function ReportTable({ reportList }) {
         Header: "returned at",
         accessor: "returned_date",
         Cell: ({ cell: { value } }) => {
-          return <>{value ? new Date(value).toUTCString() : <NoneIcon />}</>;
+          return <>{value ? new Date(value).toLocaleString() : <NoneIcon />}</>;
         },
       },
       {
@@ -169,7 +218,7 @@ function ReportTable({ reportList }) {
         Header: "done at",
         accessor: "done_date",
         Cell: ({ cell: { value } }) => {
-          return <>{value ? new Date(value).toUTCString() : <NoneIcon />}</>;
+          return <>{value ? new Date(value).toLocaleString() : <NoneIcon />}</>;
         },
       },
       {
@@ -192,12 +241,6 @@ function ReportTable({ reportList }) {
     ],
     []
   );
-
-  function removeOrder(id) {
-    dispatch(deleteReport(id));
-    dispatch(clearReportDeleteStatus());
-  }
-
   function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
   }
@@ -235,11 +278,9 @@ function ReportTable({ reportList }) {
     gotoPage,
     nextPage,
     previousPage,
-    setPageSize,
     prepareRow,
     state,
     state: { pageIndex, pageSize },
-    // visibleColumns,
     preGlobalFilteredRows,
     setGlobalFilter,
   } = useTable(

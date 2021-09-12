@@ -103,7 +103,7 @@ function EmployeeTable({ employeeList }) {
         Header: "created at",
         accessor: "created_at",
         Cell: ({ cell: { value } }) => {
-          return new Date(value).toUTCString();
+          return new Date(value).toLocaleString();
         },
       },
       {

@@ -21,6 +21,7 @@ import {
   PrevIcon,
   NextIcon,
   EndIcon,
+  ForbiddenIcon,
 } from "../../icons";
 import {
   Label,
@@ -39,34 +40,58 @@ import {
 } from "@windmill/react-ui";
 import { matchSorter } from "match-sorter";
 import {
+  clearStatuslogByDeliveredStatus,
   clearStatuslogByDoneStatus,
   clearStatuslogByOrderIdStatus,
+  clearStatuslogByReturnedStatus,
   fetchStatuslogsByDone,
 } from "../Storages/orderlogsSlice";
 import { Link } from "react-router-dom";
 import { clearOrderListStatus } from "../Storages/ordersSlice";
 import { useAuth } from "../../context/Auth";
+import { clearReportListStatus } from "../Storages/reportsSlice";
 
 function Return() {
   const dispatch = useDispatch();
-
   const orderListStatus = useSelector((state) => state.orders.orderListStatus);
+  const statuslogByOrderIdStatus = useSelector(
+    (state) => state.orderlogs.statuslogByOrderIdStatus
+  );
+  const statuslogByReturnedStatus = useSelector(
+    (state) => state.orderlogs.statuslogByReturnedStatus
+  );
+  const statuslogByDeliveredStatus = useSelector(
+    (state) => state.orderlogs.statuslogByDeliveredStatus
+  );
+  const reportListStatus = useSelector(
+    (state) => state.reports.reportListStatus
+  );
 
   useEffect(() => {
     if (orderListStatus === "succeeded") {
       dispatch(clearOrderListStatus());
     }
   }, [orderListStatus, dispatch]);
-
-  const statuslogByOrderIdStatus = useSelector(
-    (state) => state.orderlogs.statuslogByOrderIdStatus
-  );
-
   useEffect(() => {
     if (statuslogByOrderIdStatus === "succeeded") {
       dispatch(clearStatuslogByOrderIdStatus());
     }
   }, [statuslogByOrderIdStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByReturnedStatus === "succeeded") {
+      dispatch(clearStatuslogByReturnedStatus());
+    }
+  }, [statuslogByReturnedStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByDeliveredStatus === "succeeded") {
+      dispatch(clearStatuslogByDeliveredStatus());
+    }
+  }, [statuslogByDeliveredStatus, dispatch]);
+  useEffect(() => {
+    if (reportListStatus === "succeeded") {
+      dispatch(clearReportListStatus());
+    }
+  }, [reportListStatus, dispatch]);
 
   const statuslogByDone = useSelector(
     (status) => status.orderlogs.statuslogByDone
@@ -131,7 +156,9 @@ function EmployeeTable({ statuslogByDone }) {
         Cell: ({ cell: { value }, row: { original } }) => {
           return (
             <span>
-              {value ? (
+              {original.orders.status === "cancelled" ? (
+                <ForbiddenIcon className="w-6 h-6" color="red" />
+              ) : value ? (
                 <CheckIcon color="green" />
               ) : (
                 <Button
@@ -166,7 +193,7 @@ function EmployeeTable({ statuslogByDone }) {
                   layout="link"
                   size="icon"
                   tag={Link}
-                  to={`/app/pick-employee/${row.original.id}`}
+                  to={`/app/pick-employee/${row.original.id}/admin_logistic/staff_logistic`}
                 >
                   <PeopleIcon className="w-5 h-5" arial-hidden="true" />
                 </Button>

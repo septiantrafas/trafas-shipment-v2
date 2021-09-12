@@ -86,6 +86,8 @@ export const updateOrder = createAsyncThunk(
         customer_address: updatedData.customer_address,
         pickup_date: updatedData.pickup_date,
         product_list: updatedData.product_list,
+        status: updatedData.status,
+        explaination: updatedData.explaination,
         note: updatedData.note,
       })
       .eq("id", updatedData.id);
@@ -197,7 +199,9 @@ const ordersSlice = createSlice({
       state.orderDelete = action.payload.data;
       const array = current(state.orderList);
       // eslint-disable-next-line eqeqeq
-      const temp = array.filter((element) => element.id != action.payload);
+      const temp = array.filter(
+        (element) => element.id != action.payload.data[0].id
+      );
       state.orderList = temp;
     },
     [deleteOrder.rejected]: (state, action) => {

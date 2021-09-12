@@ -35,6 +35,17 @@ export const fetchEmployeeById = createAsyncThunk(
   }
 );
 
+export const fetchEmployeeByRole = createAsyncThunk(
+  "employees/fetchEmployeeByRole",
+  async (role) => {
+    const response = await supabase
+      .from("employees")
+      .select("*")
+      .eq("role", role);
+    return response;
+  }
+);
+
 export const createNewEmployee = createAsyncThunk(
   "employees/createNewEmployee",
   async (data) => {
@@ -81,6 +92,12 @@ export const updateEmployee = createAsyncThunk(
 export const updatePassword = createAsyncThunk(
   "employees/updatePassword",
   async (updatedData) => {
+    const { data } = await supabase
+      .from("employees")
+      .update({
+        password: updatedData.password,
+      })
+      .eq("id", updatedData.id);
     const { user, error } = await supabase.auth.update({
       password: updatedData.password,
     });

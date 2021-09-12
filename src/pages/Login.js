@@ -8,26 +8,17 @@ import { useAuth } from "../context/Auth";
 function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
-
-  // Get signUp function from the auth context
   const { signIn } = useAuth();
-
   const history = useHistory();
 
   async function handleSubmit(e) {
     e.preventDefault();
-
-    // Get email and password input values
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
-
-    // Calls `signIn` function from the context
     const { error } = await signIn({ email, password });
-
     if (error) {
       alert("error signing in");
     } else {
-      // Redirect user to Dashboard
       history.push("/app");
     }
   }
@@ -62,10 +53,11 @@ function Login() {
                     className="mt-1"
                     type="email"
                     placeholder="john@doe.com"
+                    name="email"
                     ref={emailRef}
+                    autocomplete="emailRef"
                   />
                 </Label>
-
                 <Label className="mt-4">
                   <span>Password</span>
                   <Input
@@ -73,9 +65,10 @@ function Login() {
                     type="password"
                     placeholder="***************"
                     ref={passwordRef}
+                    name="password"
+                    autocomplete="passwordRef"
                   />
                 </Label>
-
                 <Button type="submit" className="mt-4" block>
                   Log in
                 </Button>

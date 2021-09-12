@@ -21,6 +21,7 @@ import {
   PrevIcon,
   NextIcon,
   EndIcon,
+  ForbiddenIcon,
 } from "../../icons";
 import {
   Label,
@@ -39,24 +40,71 @@ import {
 } from "@windmill/react-ui";
 import { matchSorter } from "match-sorter";
 import {
+  clearStatuslogByCollectedStatus,
   clearStatuslogByDeliveredStatus,
+  clearStatuslogByDoneStatus,
   clearStatuslogByOrderIdStatus,
+  clearStatuslogByReturnedStatus,
   fetchStatuslogsByDelivered,
 } from "../Storages/orderlogsSlice";
 import { Link } from "react-router-dom";
 import { clearOrderListStatus } from "../Storages/ordersSlice";
 import { useAuth } from "../../context/Auth";
+import { clearReportListStatus } from "../Storages/reportsSlice";
 
 function Delivery() {
   const dispatch = useDispatch();
 
   const orderListStatus = useSelector((state) => state.orders.orderListStatus);
+  const statuslogByOrderIdStatus = useSelector(
+    (state) => state.orderlogs.statuslogByOrderIdStatus
+  );
+
+  const statuslogByCollectedStatus = useSelector(
+    (state) => state.orderlogs.statuslogByCollectedStatus
+  );
+  const statuslogByDoneStatus = useSelector(
+    (state) => state.orderlogs.statuslogByDoneStatus
+  );
+  const statuslogByReturnedStatus = useSelector(
+    (state) => state.orderlogs.statuslogByReturnedStatus
+  );
+  const reportListStatus = useSelector(
+    (state) => state.reports.reportListStatus
+  );
 
   useEffect(() => {
     if (orderListStatus === "succeeded") {
       dispatch(clearOrderListStatus());
     }
   }, [orderListStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByOrderIdStatus === "succeeded") {
+      dispatch(clearStatuslogByOrderIdStatus());
+    }
+  }, [statuslogByOrderIdStatus, dispatch]);
+
+  useEffect(() => {
+    if (statuslogByCollectedStatus === "succeeded") {
+      dispatch(clearStatuslogByCollectedStatus());
+    }
+  }, [statuslogByCollectedStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByReturnedStatus === "succeeded") {
+      dispatch(clearStatuslogByReturnedStatus());
+    }
+  }, [statuslogByReturnedStatus, dispatch]);
+
+  useEffect(() => {
+    if (statuslogByDoneStatus === "succeeded") {
+      dispatch(clearStatuslogByDoneStatus());
+    }
+  }, [statuslogByDoneStatus, dispatch]);
+  useEffect(() => {
+    if (reportListStatus === "succeeded") {
+      dispatch(clearReportListStatus());
+    }
+  }, [reportListStatus, dispatch]);
 
   const statuslogByDelivered = useSelector(
     (status) => status.orderlogs.statuslogByDelivered
@@ -70,16 +118,6 @@ function Delivery() {
       dispatch(fetchStatuslogsByDelivered());
     }
   }, [statuslogByDeliveredStatus, dispatch]);
-
-  const statuslogByOrderIdStatus = useSelector(
-    (state) => state.orderlogs.statuslogByOrderIdStatus
-  );
-
-  useEffect(() => {
-    if (statuslogByOrderIdStatus === "succeeded") {
-      dispatch(clearStatuslogByOrderIdStatus());
-    }
-  }, [statuslogByOrderIdStatus, dispatch]);
 
   return (
     <>
@@ -132,7 +170,7 @@ function EmployeeTable({ statuslogByDelivered }) {
         Header: "to deliver",
         accessor: "orders.delivery_date",
         Cell: ({ cell: { value } }) => {
-          return new Date(value).toUTCString();
+          return new Date(value).toLocaleString();
         },
       },
       {
@@ -141,7 +179,9 @@ function EmployeeTable({ statuslogByDelivered }) {
         Cell: ({ cell: { value }, row: { original } }) => {
           return (
             <span>
-              {value ? (
+              {original.orders.status === "cancelled" ? (
+                <ForbiddenIcon className="w-6 h-6" color="red" />
+              ) : value ? (
                 <CheckIcon color="green" />
               ) : (
                 <Button
@@ -176,7 +216,7 @@ function EmployeeTable({ statuslogByDelivered }) {
                   layout="link"
                   size="icon"
                   tag={Link}
-                  to={`/app/pick-employee/${row.original.id}`}
+                  to={`/app/pick-employee/${row.original.id}/admin_marketing/staff_marketing`}
                 >
                   <PeopleIcon className="w-5 h-5" arial-hidden="true" />
                 </Button>

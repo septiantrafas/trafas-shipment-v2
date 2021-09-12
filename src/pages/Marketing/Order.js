@@ -21,8 +21,13 @@ import {
   PrevIcon,
   NextIcon,
   EndIcon,
+  ForbiddenIcon,
 } from "../../icons";
 import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   Label,
   Table,
   TableHeader,
@@ -42,38 +47,91 @@ import {
   clearOrderByIdStatus,
   clearOrderDeleteStatus,
   clearOrderListStatus,
+  clearOrderUpdateStatus,
   deleteOrder,
   fetchOrder,
   fetchOrderByEmployee,
+  updateOrder,
 } from "../Storages/ordersSlice";
 import { Link } from "react-router-dom";
-import { clearStatuslogByOrderIdStatus } from "../Storages/orderlogsSlice";
+import {
+  clearStatuslogByCollectedStatus,
+  clearStatuslogByDeliveredStatus,
+  clearStatuslogByDoneStatus,
+  clearStatuslogByOrderIdStatus,
+  clearStatuslogByReturnedStatus,
+} from "../Storages/orderlogsSlice";
 import { useAuth } from "../../context/Auth";
+import { clearReportListStatus } from "../Storages/reportsSlice";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 function Order() {
-  const dispatch = useDispatch();
   const { user, userRole } = useAuth();
+  const dispatch = useDispatch();
+
   const orderByIdStatus = useSelector((state) => state.orders.orderByIdStatus);
+  const statuslogByOrderIdStatus = useSelector(
+    (state) => state.orderlogs.statuslogByOrderIdStatus
+  );
+  const statuslogByCollectedStatus = useSelector(
+    (state) => state.orderlogs.statuslogByCollectedStatus
+  );
+  const statuslogByDoneStatus = useSelector(
+    (state) => state.orderlogs.statuslogByDoneStatus
+  );
+  const statuslogByReturnedStatus = useSelector(
+    (state) => state.orderlogs.statuslogByReturnedStatus
+  );
+  const statuslogByDeliveredStatus = useSelector(
+    (state) => state.orderlogs.statuslogByDeliveredStatus
+  );
+  const reportListStatus = useSelector(
+    (state) => state.reports.reportListStatus
+  );
+
   useEffect(() => {
     if (orderByIdStatus === "succeeded") {
       dispatch(clearOrderByIdStatus());
     }
   }, [orderByIdStatus, dispatch]);
-
-  const orderList = useSelector((status) => status.orders.orderList);
-  const orderListStatus = useSelector(
-    (status) => status.orders.orderListStatus
-  );
-
-  const statuslogByOrderIdStatus = useSelector(
-    (state) => state.orderlogs.statuslogByOrderIdStatus
-  );
-
+  useEffect(() => {
+    if (statuslogByCollectedStatus === "succeeded") {
+      dispatch(clearStatuslogByCollectedStatus());
+    }
+  }, [statuslogByCollectedStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByReturnedStatus === "succeeded") {
+      dispatch(clearStatuslogByReturnedStatus());
+    }
+  }, [statuslogByReturnedStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByDeliveredStatus === "succeeded") {
+      dispatch(clearStatuslogByDeliveredStatus());
+    }
+  }, [statuslogByDeliveredStatus, dispatch]);
+  useEffect(() => {
+    if (statuslogByDoneStatus === "succeeded") {
+      dispatch(clearStatuslogByDoneStatus());
+    }
+  }, [statuslogByDoneStatus, dispatch]);
+  useEffect(() => {
+    if (reportListStatus === "succeeded") {
+      dispatch(clearReportListStatus());
+    }
+  }, [reportListStatus, dispatch]);
   useEffect(() => {
     if (statuslogByOrderIdStatus === "succeeded") {
       dispatch(clearStatuslogByOrderIdStatus());
     }
   }, [statuslogByOrderIdStatus, dispatch]);
+
+  // Fetch order list
+  const orderList = useSelector((status) => status.orders.orderList);
+  const orderListStatus = useSelector(
+    (status) => status.orders.orderListStatus
+  );
 
   useEffect(() => {
     if (orderListStatus === "idle") {
@@ -83,14 +141,12 @@ function Order() {
 
   useEffect(() => {
     if (
-      (userRole?.role === "super_admin" && orderListStatus === "succeeded") ||
-      (userRole?.role === "admin_marketing" && orderListStatus === "succeeded")
+      userRole?.role !== "super_admin" ||
+      userRole?.role !== "admin_marketing"
     ) {
-      dispatch(fetchOrder());
+      dispatch(fetchOrderByEmployee(user.id));
     }
-  }, [userRole, dispatch]);
-
-  console.log(orderList);
+  }, [user]);
 
   return (
     <>
@@ -108,11 +164,22 @@ function Order() {
 }
 
 function EmployeeTable({ orderList }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [orderId, setOrderId] = useState("");
+  const [orderName, setOrderName] = useState("");
+  function openModal(orderId, orderName) {
+    setIsModalOpen(true);
+    setOrderId(orderId);
+    setOrderName(orderName);
+  }
+
+  function closeModal() {
+    setIsModalOpen(false);
+  }
   const dispatch = useDispatch();
   const { userRole } = useAuth();
   const [tglFilterBox, setTglFilterBox] = useState(false);
   const data = React.useMemo(() => orderList, [orderList]);
-  console.log(data);
   const columns = React.useMemo(
     () => [
       {
@@ -147,7 +214,7 @@ function EmployeeTable({ orderList }) {
         Header: "delivery date",
         accessor: "delivery_date",
         Cell: ({ cell: { value } }) => {
-          return new Date(value).toUTCString();
+          return new Date(value).toLocaleString();
         },
         Filter: "",
         filter: "",
@@ -157,6 +224,17 @@ function EmployeeTable({ orderList }) {
         Cell: ({ row }) => {
           return (
             <div className="flex justify-start space-x-2 ">
+              <div>
+                <Button
+                  layout="link"
+                  size="icon"
+                  onClick={() =>
+                    openModal(row.original.id, row.original.customer_name)
+                  }
+                >
+                  <ForbiddenIcon className="w-5 h-5" arial-hidden="true" />
+                </Button>
+              </div>
               <Button
                 layout="link"
                 size="icon"
@@ -317,8 +395,71 @@ function EmployeeTable({ orderList }) {
     );
   }
 
+  const { register, handleSubmit, reset } = useForm({
+    defaultValues: {
+      status: "cancelled",
+      explaination: "",
+    },
+  });
+
+  const onSubmit = async (data) => {
+    if (true)
+      try {
+        data.id = orderId;
+        const resultAction = await dispatch(updateOrder(data));
+        unwrapResult(resultAction);
+        if (resultAction.payload[0]) {
+          alert("order cancelled !");
+        }
+      } catch (error) {
+        if (error) throw toast.error("Gagal menambahkan data!");
+      } finally {
+        dispatch(clearOrderUpdateStatus());
+        dispatch(clearOrderListStatus());
+      }
+  };
+
   return (
     <>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <ModalHeader>
+            Are you sure to cancel order to {orderName} ?{" "}
+          </ModalHeader>
+          <ModalBody>
+            <Label>
+              <span>Please tell us the reason</span>
+              <Input
+                className="mt-1"
+                type="textarea"
+                {...register("explaination", { required: true })}
+              />
+            </Label>
+          </ModalBody>
+          <ModalFooter>
+            <div className="hidden sm:block">
+              <Button layout="outline" onClick={closeModal}>
+                No
+              </Button>
+            </div>
+            <div className="hidden sm:block">
+              <Button type="submit" size="small">
+                Yes
+              </Button>
+            </div>
+            <div className="block w-full sm:hidden">
+              <Button block size="large" layout="outline" onClick={closeModal}>
+                No
+              </Button>
+            </div>
+            <div className="block w-full sm:hidden">
+              <Button type="submit" size="small">
+                Yes
+              </Button>
+            </div>
+          </ModalFooter>
+        </form>
+      </Modal>
       <div className="flex justify-between">
         <GlobalFilter
           preGlobalFilteredRows={preGlobalFilteredRows}
