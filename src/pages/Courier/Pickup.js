@@ -210,7 +210,7 @@ function EmployeeTable({ statuslogByReturned }) {
                   layout="link"
                   size="icon"
                   tag={Link}
-                  to={`/app/pick-employee/${row.original.id}/admin_marketing/staff_marketing`}
+                  to={`/app/pick-employee/${row.original.id}/admin_courier/staff_courier`}
                 >
                   <PeopleIcon className="w-5 h-5" arial-hidden="true" />
                 </Button>
