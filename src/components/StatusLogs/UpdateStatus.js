@@ -125,14 +125,30 @@ function EditStatusCollect() {
         statuslogByOrderId?.find((data) => data.id === id) ?? ""
       );
       if (statuslogByOrderId.length === 3) {
-        setStatuslogState(
-          statuslogByOrderId?.find((data) => data.name === "confirmed") ?? ""
-        );
+        if (status_name === "confirmed") {
+          setStatuslogState(
+            statuslogByOrderId?.find((data) => data.name === "confirmed") ?? ""
+          );
+        } else if (status_name === "returned") {
+          setStatuslogState(
+            statuslogByOrderId?.find((data) => data.name === "collected") ?? ""
+          );
+        }
       } else if (statuslogByOrderId.length === 4) {
-        setStatuslogState(
-          statuslogByOrderId?.find((data) => data.name === "delivered") ?? ""
-        );
-      } else {
+        if (status_name === "confirmed") {
+          setStatuslogState(
+            statuslogByOrderId?.find((data) => data.name === "confirmed") ?? ""
+          );
+        } else if (status_name === "collected") {
+          setStatuslogState(
+            statuslogByOrderId?.find((data) => data.name === "collected") ?? ""
+          );
+        } else if (status_name === "returned") {
+          setStatuslogState(
+            statuslogByOrderId?.find((data) => data.name === "delivered") ?? ""
+          );
+        }
+      } else if (statuslogByOrderId.length === 5) {
         setStatuslogState(
           statuslogByOrderId?.find((data) => data.name === status_name) ?? ""
         );
