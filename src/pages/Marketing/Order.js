@@ -140,10 +140,7 @@ function Order() {
   }, [orderListStatus, dispatch]);
 
   useEffect(() => {
-    if (
-      userRole?.role !== "super_admin" ||
-      userRole?.role !== "admin_marketing"
-    ) {
+    if (userRole?.role !== "staff_admin") {
       dispatch(fetchOrderByEmployee(user.id));
     }
   }, [user]);
