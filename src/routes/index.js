@@ -99,7 +99,7 @@ const routes = [
     ],
   },
   {
-    path: "/pick-employee/:id/:first_role/:sec_role",
+    path: "/pick-employee/:id/:type",
     component: PickEmployee,
     roles: [
       "super_admin",

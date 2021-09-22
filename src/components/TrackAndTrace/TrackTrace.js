@@ -137,10 +137,16 @@ function TrackTrace() {
             </div>
           </Label>
 
-          <Label className="col-span-2">
+          <Label >
             <span>Address</span>
             <div className="my-2 p-2 bg-gray-700 text-gray-300">
               {orderById.customer_address}
+            </div>
+          </Label>
+          <Label>
+            <span>Operation Date</span>
+            <div className="my-2 p-2 bg-gray-700 text-gray-300">
+              {orderById.op_date}
             </div>
           </Label>
           <Label>

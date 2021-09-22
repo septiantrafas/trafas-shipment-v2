@@ -60,6 +60,7 @@ function CreateOrder() {
       number: "",
       customer_name: "",
       customer_address: "",
+      op_date:'',
       to_deliver: false,
       delivery_date: "",
       to_pickup: false,
@@ -94,6 +95,7 @@ function CreateOrder() {
         number: "", //null
         customer_name: "", //not-null
         customer_address: "", //not-null
+        op_date:'',
         to_deliver: false, //not-null
         delivery_date: "", //not-null
         to_pickup: false, //null
@@ -106,7 +108,12 @@ function CreateOrder() {
     }
   }, [formState, reset]);
 
-  const watchAllFields = watch();
+  var date = new Date();
+  var min_date = String(date.getFullYear()+
+  "-"+(date.getMonth()+1<10? "0"+String(date.getMonth()+1):date.getMonth()+1)+
+  "-"+date.getDate()+"T"+"00"+":"+"00"
+  )
+  console.log(min_date)
   return (
     <>
       <Toaster
@@ -193,21 +200,32 @@ function CreateOrder() {
                 <span className="ml-2">No</span>
               </Label>
             </div>
-
+            <Label className='col-span-2'>
+              <span>Operation Date</span>
+              <Input
+                className="mt-1"
+                type="datetime-local"
+                {...register("op_date")}
+                min={min_date}
+              />
+            </Label>
             <Label>
               <span>Shipment Date</span>
               <Input
                 className="mt-1"
                 type="datetime-local"
                 {...register("delivery_date")}
+                min={min_date}
               />
             </Label>
+            
             <Label>
               <span>Pick Up Date</span>
               <Input
                 className="mt-1"
                 type="datetime-local"
                 {...register("pickup_date")}
+                min={min_date}
               />
             </Label>
           </div>

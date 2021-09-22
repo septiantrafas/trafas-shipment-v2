@@ -134,16 +134,15 @@ function Order() {
   );
 
   useEffect(() => {
-    if (orderListStatus === "idle") {
+   if(userRole){
+    if(userRole.role!== 'staff_marketing' && orderListStatus === "idle" ){
       dispatch(fetchOrder());
-    }
-  }, [orderListStatus, dispatch]);
-
-  useEffect(() => {
-    if (userRole?.role !== "staff_marketing") {
+    } else if(userRole.role=== 'staff_marketing' && orderListStatus === "idle"){
       dispatch(fetchOrderByEmployee(user.id));
     }
-  }, [user]);
+   }
+  }, [orderListStatus, userRole, dispatch]);
+
 
   return (
     <>

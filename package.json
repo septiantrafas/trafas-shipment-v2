@@ -28,6 +28,7 @@
     "classnames": "2.2.6",
     "faker": "4.1.0",
     "match-sorter": "^6.3.0",
+    "ndarray": "^1.0.19",
     "normalize-url": "^7.0.1",
     "postcss": "^8.3.6",
     "postcss-loader": "^6.1.1",
@@ -43,7 +44,8 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "^4.0.3",
     "react-table": "^7.7.0",
-    "react-transition-group": "4.4.1"
+    "react-transition-group": "4.4.1",
+    "xlsx": "^0.17.2"
   },
   "devDependencies": {
     "@release-it/conventional-changelog": "1.1.4",

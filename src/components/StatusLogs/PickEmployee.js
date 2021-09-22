@@ -23,8 +23,8 @@ import {
 function EditStatusCollect() {
   let history = useHistory();
   let { id } = useParams();
-  let { first_role } = useParams();
-  let { sec_role } = useParams();
+  let { type } = useParams();
+  
   const dispatch = useDispatch();
 
   const statuslogByCollectedStatus = useSelector(
@@ -79,7 +79,11 @@ function EditStatusCollect() {
         history.push("/app");
       }
   };
-
+  var date = new Date();
+  var min_date = String(date.getFullYear()+
+  "-"+(date.getMonth()+1<10? "0"+String(date.getMonth()+1):date.getMonth()+1)+
+  "-"+date.getDate()+"T"+"00"+":"+"00"
+  )
   return (
     <>
       <Toaster
@@ -126,8 +130,7 @@ function EditStatusCollect() {
                 >
                   {employeeList
                     .filter(
-                      (data) =>
-                        data.role === first_role || data.role === sec_role
+                      (data) => type==='courier'? data.role==='admin_courier' ||data.role==='staff_courier'||data.role==='admin_marketing'||data.role==='staff_marketing': type==='logistic'? data.role==='admin_logistic' ||data.role==='staff_logistic' : ''
                     )
                     .map((emp) => {
                       return (
@@ -144,6 +147,7 @@ function EditStatusCollect() {
                   className="mt-1"
                   type="datetime-local"
                   {...register("target_time", { required: true })}
+                  min={min_date}
                 />
               </Label>
             </div>

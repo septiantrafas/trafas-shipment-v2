@@ -23,7 +23,7 @@ export const fetchReport = createAsyncThunk("reports/fetchReport", async () => {
   const response = await supabase
     .from("reports")
     .select(
-      `*,orders:order_id(customer_name,customer_address,created_at),confirmed:confirmed_by(name),collected:collected_by(name),delivered:delivered_by(name),returned:returned_by(name),done:done_by(name)`
+      `*,orders(customer_name,customer_address,created_at),confirmed:confirmed_by(name),collected:collected_by(name),delivered:delivered_by(name),returned:returned_by(name),done:done_by(name)`
     );
   if (response.error) {
     alert(response.error.message);
