@@ -257,6 +257,8 @@ export const updateEmployeeLog = createAsyncThunk(
       .update({
         employee_id: updatedData.employee_id,
         target_time: updatedData.target_time,
+        employee2: updatedData.employee2,
+        employee3: updatedData.employee3,
       })
       .eq("id", updatedData.id);
     if (error) {

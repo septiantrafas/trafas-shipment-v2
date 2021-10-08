@@ -12,10 +12,10 @@ import {
 } from "react-table";
 import {
   SearchIcon,
+  CheckIcon,
   FilterIcon,
   RefreshIcon,
   PeopleIcon,
-  CheckIcon,
   WarningIcon,
   StartIcon,
   PrevIcon,
@@ -40,22 +40,37 @@ import {
 } from "@windmill/react-ui";
 import { matchSorter } from "match-sorter";
 import {
+  clearStatuslogByCollectedStatus,
   clearStatuslogByDeliveredStatus,
   clearStatuslogByDoneStatus,
   clearStatuslogByOrderIdStatus,
   clearStatuslogByReturnedStatus,
-  fetchStatuslogsByDone,
+  fetchStatuslogByCollected,
+  fetchStatuslogByCollectedByEmployee,
 } from "../Storages/orderlogsSlice";
 import { Link } from "react-router-dom";
 import { clearOrderListStatus } from "../Storages/ordersSlice";
 import { useAuth } from "../../context/Auth";
 import { clearReportListStatus } from "../Storages/reportsSlice";
+import {
+  fetchSupport,
+  fetchSupportByEmployee,
+} from "../Storages/supportsSlice";
 
-function Return() {
+function Support() {
+  const { user, userRole } = useAuth();
   const dispatch = useDispatch();
+  const supportList = useSelector((state) => state.supports.supportList);
+  const supportListStatus = useSelector(
+    (state) => state.supports.supportListStatus
+  );
+
   const orderListStatus = useSelector((state) => state.orders.orderListStatus);
-  const statuslogByOrderIdStatus = useSelector(
-    (state) => state.orderlogs.statuslogByOrderIdStatus
+  const statuslogByCollectedStatus = useSelector(
+    (state) => state.orderlogs.statuslogByCollectedStatus
+  );
+  const statuslogByDoneStatus = useSelector(
+    (state) => state.orderlogs.statuslogByDoneStatus
   );
   const statuslogByReturnedStatus = useSelector(
     (state) => state.orderlogs.statuslogByReturnedStatus
@@ -72,60 +87,73 @@ function Return() {
       dispatch(clearOrderListStatus());
     }
   }, [orderListStatus, dispatch]);
-  useEffect(() => {
-    if (statuslogByOrderIdStatus === "succeeded") {
-      dispatch(clearStatuslogByOrderIdStatus());
-    }
-  }, [statuslogByOrderIdStatus, dispatch]);
+
   useEffect(() => {
     if (statuslogByReturnedStatus === "succeeded") {
       dispatch(clearStatuslogByReturnedStatus());
     }
   }, [statuslogByReturnedStatus, dispatch]);
+
   useEffect(() => {
     if (statuslogByDeliveredStatus === "succeeded") {
       dispatch(clearStatuslogByDeliveredStatus());
     }
   }, [statuslogByDeliveredStatus, dispatch]);
+
+  useEffect(() => {
+    if (statuslogByDoneStatus === "succeeded") {
+      dispatch(clearStatuslogByDoneStatus());
+    }
+  }, [statuslogByDoneStatus, dispatch]);
+
   useEffect(() => {
     if (reportListStatus === "succeeded") {
       dispatch(clearReportListStatus());
     }
   }, [reportListStatus, dispatch]);
 
-  const statuslogByDone = useSelector(
-    (status) => status.orderlogs.statuslogByDone
-  );
-  const statuslogByDoneStatus = useSelector(
-    (status) => status.orderlogs.statuslogByDoneStatus
+  const statuslogByOrderIdStatus = useSelector(
+    (state) => state.orderlogs.statuslogByOrderIdStatus
   );
 
   useEffect(() => {
-    if (statuslogByDoneStatus === "idle") {
-      dispatch(fetchStatuslogsByDone());
+    if (statuslogByOrderIdStatus === "succeeded") {
+      dispatch(clearStatuslogByOrderIdStatus());
     }
-  }, [statuslogByDoneStatus, dispatch]);
+  }, [statuslogByOrderIdStatus, dispatch]);
+
+  useEffect(() => {
+    if (supportListStatus === "idle") {
+      dispatch(fetchSupport());
+    }
+  }, [supportListStatus, dispatch]);
+
+  useEffect(() => {
+    if (userRole?.role === "staff_logistic") {
+      dispatch(fetchSupportByEmployee(user.id));
+    }
+  }, [user]);
 
   return (
     <>
-      <PageTitle>TO RETURN</PageTitle>
+      <PageTitle>TO SUPPORT</PageTitle>
       <div className="flex justify-start mb-4">
         <div className=" self-center dark:text-white mr-4">LIST</div>
-        {statuslogByDoneStatus === "loading" ? (
+        {supportListStatus === "loading" ? (
           <HollowDotsSpinner className="self-center" color="red" size="8" />
         ) : null}
       </div>
 
-      <EmployeeTable statuslogByDone={statuslogByDone} />
+      <EmployeeTable supportList={supportList} />
     </>
   );
 }
 
-function EmployeeTable({ statuslogByDone }) {
-  const dispatch = useDispatch();
+function EmployeeTable({ supportList }) {
   const { userRole } = useAuth();
+  const dispatch = useDispatch();
   const [tglFilterBox, setTglFilterBox] = useState(false);
-  const data = React.useMemo(() => statuslogByDone, [statuslogByDone]);
+  const data = React.useMemo(() => supportList, [supportList]);
 
   const columns = React.useMemo(
     () => [
@@ -133,8 +161,9 @@ function EmployeeTable({ statuslogByDone }) {
         Header: "Order id",
         accessor: "order_id",
       },
+
       {
-        Header: "Checked by",
+        Header: "Supported by",
         accessor: "employees.name",
       },
       {
@@ -155,27 +184,10 @@ function EmployeeTable({ statuslogByDone }) {
       },
 
       {
-        Header: "status",
-        accessor: "status",
-        Cell: ({ cell: { value }, row: { original } }) => {
-          return (
-            <span>
-              {original.orders.status === "cancelled" ? (
-                <ForbiddenIcon className="w-6 h-6" color="red" />
-              ) : value ? (
-                <CheckIcon color="green" />
-              ) : (
-                <Button
-                  layout="link"
-                  size="icon"
-                  tag={Link}
-                  to={`/app/update-status/returned/${original.order_id}/${original.id}`}
-                >
-                  <WarningIcon color="yellow" />
-                </Button>
-              )}
-            </span>
-          );
+        Header: "op date",
+        accessor: "orders.op_date",
+        Cell: ({ cell: { value } }) => {
+          return new Date(value).toLocaleString();
         },
       },
       {
@@ -197,7 +209,7 @@ function EmployeeTable({ statuslogByDone }) {
                   layout="link"
                   size="icon"
                   tag={Link}
-                  to={`/app/pick-employee/${row.original.id}/admin_logistic/staff_logistic`}
+                  to={`/app/support/pick-employee/${row.original.id}/admin_support/staff_support`}
                 >
                   <PeopleIcon className="w-5 h-5" arial-hidden="true" />
                 </Button>
@@ -249,9 +261,11 @@ function EmployeeTable({ statuslogByDone }) {
     gotoPage,
     nextPage,
     previousPage,
+    setPageSize,
     prepareRow,
     state,
-    state: { pageIndex },
+    state: { pageIndex, pageSize },
+    // visibleColumns,
     preGlobalFilteredRows,
     setGlobalFilter,
   } = useTable(
@@ -334,7 +348,7 @@ function EmployeeTable({ statuslogByDone }) {
         />
         <div className="flex space-x-3 self-center">
           <Button
-            onClick={() => dispatch(clearStatuslogByDoneStatus())}
+            onClick={() => dispatch(clearStatuslogByCollectedStatus())}
             size="small"
             aria-label="Edit"
           >
@@ -475,4 +489,4 @@ function FilterBox({ allColumns }) {
   );
 }
 
-export default Return;
+export default Support;

@@ -61,15 +61,26 @@ function CreateOrder() {
       customer_name: "",
       customer_address: "",
       to_deliver: false,
-      delivery_date: "",
+      delivery_date: null,
       to_pickup: false,
-      pickup_date: "",
+      pickup_date: null,
       product_list: "",
       status: "confirmed",
       note: "",
       explaination: "",
     },
   });
+
+  const watchShowDeliveryDate = watch("to_deliver", false);
+  const watchShowPickupDate = watch("to_pickup", false);
+  // const watchFields = watch(["delivery_date", "pickup_date"]);
+
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) =>
+      console.log(value, name, type)
+    );
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   const onSubmit = async (data) => {
     if (canSave)
@@ -87,6 +98,8 @@ function CreateOrder() {
       }
   };
 
+  console.log(watchShowDeliveryDate);
+
   React.useEffect(() => {
     if (isSubmitSuccessful) {
       reset({
@@ -95,9 +108,9 @@ function CreateOrder() {
         customer_name: "", //not-null
         customer_address: "", //not-null
         to_deliver: false, //not-null
-        delivery_date: "", //not-null
+        delivery_date: null, //not-null
         to_pickup: false, //null
-        pickup_date: "", //null
+        pickup_date: null, //null
         product_list: "", //not-null
         status: "confirmed", //not-null
         note: "",
@@ -106,7 +119,6 @@ function CreateOrder() {
     }
   }, [formState, reset]);
 
-  const watchAllFields = watch();
   return (
     <>
       <Toaster
@@ -158,6 +170,26 @@ function CreateOrder() {
               />
             </Label>
 
+            <Label>Need Support ?</Label>
+            <div className="">
+              <Label radio>
+                <Input
+                  type="radio"
+                  value={true}
+                  {...register("to_support", { required: true })}
+                />
+                <span className="ml-2">Yes</span>
+              </Label>
+              <Label className="ml-6" radio>
+                <Input
+                  type="radio"
+                  value={false}
+                  {...register("to_support", { required: true })}
+                />
+                <span className="ml-2">No</span>
+              </Label>
+            </div>
+
             <Label>Need Delivery ?</Label>
             <div className="">
               <Label radio>
@@ -194,22 +226,30 @@ function CreateOrder() {
               </Label>
             </div>
 
-            <Label>
-              <span>Shipment Date</span>
-              <Input
-                className="mt-1"
-                type="datetime-local"
-                {...register("delivery_date")}
-              />
-            </Label>
-            <Label>
-              <span>Pick Up Date</span>
-              <Input
-                className="mt-1"
-                type="datetime-local"
-                {...register("pickup_date")}
-              />
-            </Label>
+            {watchShowDeliveryDate === "true" ? (
+              <Label>
+                <span>Shipment Date</span>
+                <Input
+                  className="mt-1"
+                  type="datetime-local"
+                  {...register("delivery_date")}
+                />
+              </Label>
+            ) : (
+              ""
+            )}
+            {watchShowPickupDate === "true" ? (
+              <Label>
+                <span>Pick Up Date</span>
+                <Input
+                  className="mt-1"
+                  type="datetime-local"
+                  {...register("pickup_date")}
+                />
+              </Label>
+            ) : (
+              ""
+            )}
           </div>
           <Label>
             <span>Product List</span>
@@ -220,17 +260,14 @@ function CreateOrder() {
                 init={{
                   height: 500,
                   menubar: false,
-                  file_picker_types: "image",
-
-                  // images_upload_url: "postAcceptor.php",
-                  plugins:
-                    "print preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons",
-                  imagetools_cors_hosts: ["picsum.photos"],
+                  plugins: [
+                    "advlist autolink lists link image charmap print preview anchor",
+                    "searchreplace visualblocks code fullscreen",
+                    "insertdatetime media table paste code help wordcount",
+                  ],
                   toolbar: "undo redo | bold italic underline strikethrough | ",
-                  toolbar_sticky: true,
                   skin: "oxide-dark",
                   content_css: "dark",
-
                   content_style:
                     "body { font-family:Helvetica,Arial,sans-serif; font-size:14px; resize:vertical ; ",
                 }}

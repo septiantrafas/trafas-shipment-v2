@@ -137,13 +137,7 @@ function Order() {
     if (orderListStatus === "idle") {
       dispatch(fetchOrder());
     }
-  }, [orderListStatus, dispatch]);
-
-  useEffect(() => {
-    if (userRole?.role !== "staff_marketing") {
-      dispatch(fetchOrderByEmployee(user.id));
-    }
-  }, [user]);
+  }, [orderListStatus, user, dispatch]);
 
   return (
     <>
@@ -161,6 +155,7 @@ function Order() {
 }
 
 function EmployeeTable({ orderList }) {
+  const { user, userRole } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [orderName, setOrderName] = useState("");
@@ -174,11 +169,16 @@ function EmployeeTable({ orderList }) {
     setIsModalOpen(false);
   }
   const dispatch = useDispatch();
-  const { userRole } = useAuth();
   const [tglFilterBox, setTglFilterBox] = useState(false);
   const data = React.useMemo(() => orderList, [orderList]);
   const columns = React.useMemo(
     () => [
+      {
+        Header: "ID",
+        accessor: "id",
+        Filter: "",
+        filter: "",
+      },
       {
         Header: "Created by",
         accessor: "employees.name",
@@ -465,7 +465,11 @@ function EmployeeTable({ orderList }) {
         />
         <div className="flex space-x-3 self-center">
           <Button
-            onClick={() => dispatch(clearOrderListStatus())}
+            onClick={() =>
+              userRole?.role === "staff_marketing"
+                ? dispatch(fetchOrderByEmployee(user.id))
+                : dispatch(fetchOrder())
+            }
             size="small"
             aria-label="Edit"
           >

@@ -8,6 +8,11 @@ const roles = [
         name: "Marketing",
       },
       {
+        path: "/app/support",
+        icon: "BellIcon",
+        name: "Support",
+      },
+      {
         icon: "CardsIcon",
         name: "Logistic",
         routes: [
@@ -169,6 +174,37 @@ const roles = [
             name: "Pickup",
           },
         ],
+      },
+      {
+        path: "/app/report",
+        icon: "FormsIcon",
+        name: "Report",
+      },
+    ],
+  },
+
+  {
+    role: "admin_support",
+    routes: [
+      {
+        path: "/app/support",
+        icon: "BellIcon",
+        name: "Support",
+      },
+      {
+        path: "/app/report",
+        icon: "FormsIcon",
+        name: "Report",
+      },
+    ],
+  },
+  {
+    role: "staff_support",
+    routes: [
+      {
+        path: "/app/support",
+        icon: "BellIcon",
+        name: "Support",
       },
       {
         path: "/app/report",

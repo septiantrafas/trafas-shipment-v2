@@ -2,6 +2,7 @@ import { lazy } from "react";
 
 const Employee = lazy(() => import("../pages/Employee/Employee"));
 const Order = lazy(() => import("../pages/Marketing/Order"));
+const Support = lazy(() => import("../pages/Support/Support"));
 const Collect = lazy(() => import("../pages/Logistic/Collect"));
 const Return = lazy(() => import("../pages/Logistic/Return"));
 const Delivery = lazy(() => import("../pages/Courier/Delivery"));
@@ -28,6 +29,22 @@ const routes = [
     path: "/marketing",
     component: Order,
     roles: ["super_admin", "admin_marketing", "staff_marketing"],
+  },
+  {
+    path: "/support",
+    component: Support,
+    roles: ["super_admin", "admin_support", "staff_support"],
+  },
+  {
+    path: "/support/pick-employee/:id/:first_role/:sec_role",
+    component: PickEmployee,
+    roles: [
+      "super_admin",
+      "admin_logistic",
+      "staff_logistic",
+      "admin_courier",
+      "staff_courier",
+    ],
   },
   {
     path: "/marketing/new-order",

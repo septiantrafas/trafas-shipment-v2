@@ -56,6 +56,8 @@ function EditStatusCollect() {
     defaultValues: {
       employee_id: "",
       target_time: "",
+      employee2: "",
+      employee3: "",
     },
   });
 
@@ -146,7 +148,48 @@ function EditStatusCollect() {
                   {...register("target_time", { required: true })}
                 />
               </Label>
+              <Label>
+                <span>Second Employee</span>
+                <Select
+                  className="mt-1"
+                  {...register("employee2", { required: true })}
+                >
+                  {employeeList
+                    .filter(
+                      (data) =>
+                        data.role === first_role || data.role === sec_role
+                    )
+                    .map((emp) => {
+                      return (
+                        <option value={emp.id}>
+                          {emp.name} [{emp.role}]
+                        </option>
+                      );
+                    })}
+                </Select>
+              </Label>
+              <Label>
+                <span>Third Employee</span>
+                <Select
+                  className="mt-1"
+                  {...register("employee3", { required: true })}
+                >
+                  {employeeList
+                    .filter(
+                      (data) =>
+                        data.role === first_role || data.role === sec_role
+                    )
+                    .map((emp) => {
+                      return (
+                        <option value={emp.id}>
+                          {emp.name} [{emp.role}]
+                        </option>
+                      );
+                    })}
+                </Select>
+              </Label>
             </div>
+
             <div className="flex justify-between mt-5">
               <div>
                 <Button tag={Link} to="/app/shipment" size="small">

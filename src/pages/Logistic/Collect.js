@@ -123,6 +123,12 @@ function Collect() {
     }
   }, [statuslogByCollectedStatus, dispatch]);
 
+  useEffect(() => {
+    if (userRole?.role === "staff_logistic") {
+      dispatch(fetchStatuslogByCollectedByEmployee(user.id));
+    }
+  }, [user]);
+
   return (
     <>
       <PageTitle>TO COLLECT</PageTitle>
@@ -149,6 +155,11 @@ function EmployeeTable({ statuslogByCollected }) {
 
   const columns = React.useMemo(
     () => [
+      {
+        Header: "Order id",
+        accessor: "order_id",
+      },
+
       {
         Header: "collected by",
         accessor: "employees.name",
