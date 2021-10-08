@@ -118,10 +118,17 @@ function Collect() {
   }, [statuslogByOrderIdStatus, dispatch]);
 
   useEffect(() => {
-    if (statuslogByCollectedStatus === "idle") {
-      dispatch(fetchStatuslogByCollected());
+    if (userRole) {
+      if (userRole.role !== "staff_logistic" && orderListStatus === "idle") {
+        dispatch(fetchStatuslogByCollected());
+      } else if (
+        userRole.role === "staff_logistic" &&
+        orderListStatus === "idle"
+      ) {
+        dispatch(fetchStatuslogByCollectedByEmployee(user.id));
+      }
     }
-  }, [statuslogByCollectedStatus, dispatch]);
+  }, [orderListStatus, userRole, dispatch]);
 
   useEffect(() => {
     if (userRole?.role === "staff_logistic") {
@@ -180,9 +187,15 @@ function EmployeeTable({ statuslogByCollected }) {
           );
         },
       },
-
       {
-        Header: "to deliver",
+        Header: "deadline",
+        accessor: "target_time",
+        Cell: ({ cell: { value } }) => {
+          return new Date(value).toLocaleString();
+        },
+      },
+      {
+        Header: "to delivery at",
         accessor: "orders.delivery_date",
         Cell: ({ cell: { value } }) => {
           return new Date(value).toLocaleString();
@@ -231,7 +244,7 @@ function EmployeeTable({ statuslogByCollected }) {
                   layout="link"
                   size="icon"
                   tag={Link}
-                  to={`/app/pick-employee/${row.original.id}/admin_logistic/staff_logistic`}
+                  to={`/app/pick-employee/${row.original.id}/logistic`}
                 >
                   <PeopleIcon className="w-5 h-5" arial-hidden="true" />
                 </Button>

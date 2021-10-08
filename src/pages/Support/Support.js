@@ -209,7 +209,7 @@ function EmployeeTable({ supportList }) {
                   layout="link"
                   size="icon"
                   tag={Link}
-                  to={`/app/support/pick-employee/${row.original.id}/admin_support/staff_support`}
+                  to={`/app/support/pick-employee/${row.original.id}`}
                 >
                   <PeopleIcon className="w-5 h-5" arial-hidden="true" />
                 </Button>

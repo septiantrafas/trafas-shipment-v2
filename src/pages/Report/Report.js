@@ -47,6 +47,7 @@ import {
   clearStatuslogByOrderIdStatus,
   clearStatuslogByReturnedStatus,
 } from "../Storages/orderlogsSlice";
+import XLSX from "xlsx";
 
 function Report() {
   const dispatch = useDispatch();
@@ -116,6 +117,10 @@ function Report() {
     }
   }, [reportListStatus, dispatch]);
 
+  var data = reportList.map((list) => {
+    return Object.values(list);
+  });
+
   return (
     <>
       <PageTitle>REPORT</PageTitle>
@@ -125,9 +130,38 @@ function Report() {
           <HollowDotsSpinner className="self-center" color="red" size="8" />
         ) : null}
       </div>
+      {/* <Button onClick={()=>ExportReport(reportList)}>download</Button> */}
       <ReportTable reportList={reportList} />
     </>
   );
+}
+
+function ExportReport(reportList) {
+  const data = [
+    // reportList
+    { id: 1, name: "Denny", age: 24 },
+    { id: 2, name: "Aditya", age: 25 },
+    { id: 3, name: "Pradipta", age: 26 },
+    { id: 4, name: "Ardhie", age: 27 },
+    { id: 5, name: "Putra", age: 28 },
+    { id: 6, name: "Prananta", age: 29 },
+  ];
+
+  console.log(reportList[0].orders);
+  // console.log(data)
+  // console.log(reportList.map((list)=>  {return list.length>1?Object.values(list):list}))
+  // console.log(reportList.map((list)=>  console.log(JSON.stringify(list))))
+  // const fileName = "AOO_XLS";
+  // let wb = XLSX.utils.book_new();
+  // wb.Props = {
+  //   Title: fileName,
+  //   Author: "Denny Pradipta",
+  //   CreatedDate: new Date(),
+  // };
+  // wb.SheetNames.push("Sheet 1");
+  // let ws = XLSX.utils.json_to_sheet(reportList);
+  // wb.Sheets["Sheet 1"] = ws;
+  // XLSX.writeFile(wb, `Hello.xls`);
 }
 
 function ReportTable({ reportList }) {

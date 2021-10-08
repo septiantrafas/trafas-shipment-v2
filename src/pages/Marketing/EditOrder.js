@@ -101,6 +101,11 @@ function EditOrder() {
         history.push("/app/marketing");
       }
   };
+  var date = new Date();
+  var min_date = String(date.getFullYear()+
+  "-"+(date.getMonth()+1<10? "0"+String(date.getMonth()+1):date.getMonth()+1)+
+  "-"+date.getDate()+"T"+"00"+":"+"00"
+  )
 
   return (
     <>
@@ -160,6 +165,7 @@ function EditOrder() {
                   className="mt-1"
                   type="datetime-local"
                   {...register("pickup_date")}
+                  min={min_date}
                 />
               </Label>
             </div>

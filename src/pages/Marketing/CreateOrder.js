@@ -60,6 +60,7 @@ function CreateOrder() {
       number: "",
       customer_name: "",
       customer_address: "",
+      op_date: "",
       to_deliver: false,
       delivery_date: null,
       to_pickup: false,
@@ -107,6 +108,7 @@ function CreateOrder() {
         number: "", //null
         customer_name: "", //not-null
         customer_address: "", //not-null
+        op_date: "",
         to_deliver: false, //not-null
         delivery_date: null, //not-null
         to_pickup: false, //null
@@ -118,6 +120,21 @@ function CreateOrder() {
       });
     }
   }, [formState, reset]);
+
+  var date = new Date();
+  var min_date = String(
+    date.getFullYear() +
+      "-" +
+      (date.getMonth() + 1 < 10
+        ? "0" + String(date.getMonth() + 1)
+        : date.getMonth() + 1) +
+      "-" +
+      date.getDate() +
+      "T" +
+      "00" +
+      ":" +
+      "00"
+  );
 
   return (
     <>
@@ -226,6 +243,16 @@ function CreateOrder() {
               </Label>
             </div>
 
+            <Label className="col-span-2">
+              <span>Operation Date</span>
+              <Input
+                className="mt-1"
+                type="datetime-local"
+                {...register("op_date")}
+                min={min_date}
+              />
+            </Label>
+
             {watchShowDeliveryDate === "true" ? (
               <Label>
                 <span>Shipment Date</span>
@@ -233,6 +260,7 @@ function CreateOrder() {
                   className="mt-1"
                   type="datetime-local"
                   {...register("delivery_date")}
+                  min={min_date}
                 />
               </Label>
             ) : (
@@ -245,6 +273,7 @@ function CreateOrder() {
                   className="mt-1"
                   type="datetime-local"
                   {...register("pickup_date")}
+                  min={min_date}
                 />
               </Label>
             ) : (

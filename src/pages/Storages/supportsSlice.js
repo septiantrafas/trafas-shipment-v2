@@ -85,32 +85,9 @@ export const updateSupport = createAsyncThunk(
     const { data, error } = await supabase
       .from("supports")
       .update({
-        customer_name: updatedData.customer_name,
-        customer_address: updatedData.customer_address,
-        pickup_date: updatedData.pickup_date,
-        product_list: updatedData.product_list,
-        status: updatedData.status,
-        explaination: updatedData.explaination,
-        note: updatedData.note,
+        employee_id: updatedData.employee_id,
       })
       .eq("id", updatedData.id);
-    if (error) {
-      alert(error.message);
-    }
-    return data;
-  }
-);
-
-export const updateDataByCollectedStatus = createAsyncThunk(
-  "supports/updateDataByCollectedStatus",
-  async (updatedData) => {
-    const { data, error } = await supabase
-      .from("supports")
-      .update({
-        number: updatedData.number,
-        product_list: updatedData.product_list,
-      })
-      .eq("id", updatedData.support_id);
     if (error) {
       alert(error.message);
     }
@@ -220,18 +197,6 @@ const supportsSlice = createSlice({
       state.supportUpdate = action.payload.data;
     },
     [updateSupport.rejected]: (state, action) => {
-      state.supportUpdateStatus = "failed";
-      state.supportUpdateError = action.error.message;
-    },
-
-    [updateDataByCollectedStatus.pending]: (state) => {
-      state.supportUpdateStatus = "loading";
-    },
-    [updateDataByCollectedStatus.fulfilled]: (state, action) => {
-      state.supportUpdateStatus = "succeeded";
-      state.supportUpdate = action.payload.data;
-    },
-    [updateDataByCollectedStatus.rejected]: (state, action) => {
       state.supportUpdateStatus = "failed";
       state.supportUpdateError = action.error.message;
     },

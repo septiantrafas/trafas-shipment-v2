@@ -46,6 +46,7 @@ import {
   clearStatuslogByOrderIdStatus,
   clearStatuslogByReturnedStatus,
   fetchStatuslogsByReturned,
+  fetchStatuslogsByReturnedEmployee,
 } from "../Storages/orderlogsSlice";
 import { Link } from "react-router-dom";
 import { clearOrderListStatus } from "../Storages/ordersSlice";
@@ -53,6 +54,7 @@ import { useAuth } from "../../context/Auth";
 import { clearReportListStatus } from "../Storages/reportsSlice";
 
 function Pickup() {
+  const { user, userRole } = useAuth();
   const dispatch = useDispatch();
 
   const orderListStatus = useSelector((state) => state.orders.orderListStatus);
@@ -111,10 +113,14 @@ function Pickup() {
   );
 
   useEffect(() => {
-    if (statuslogByReturnedStatus === "idle") {
-      dispatch(fetchStatuslogsByReturned());
+    if(userRole){
+     if(userRole.role!== 'staff_courier' && orderListStatus === "idle" ){
+       dispatch(fetchStatuslogsByReturned());
+     } else if(userRole.role=== 'staff_courier' && orderListStatus === "idle"){
+       dispatch(fetchStatuslogsByReturnedEmployee(user.id));
+     }
     }
-  }, [statuslogByReturnedStatus, dispatch]);
+   }, [orderListStatus, userRole, dispatch]);
 
   return (
     <>
@@ -210,7 +216,7 @@ function EmployeeTable({ statuslogByReturned }) {
                   layout="link"
                   size="icon"
                   tag={Link}
-                  to={`/app/pick-employee/${row.original.id}/admin_courier/staff_courier`}
+                  to={`/app/pick-employee/${row.original.id}/courier`}
                 >
                   <PeopleIcon className="w-5 h-5" arial-hidden="true" />
                 </Button>

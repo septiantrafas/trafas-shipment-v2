@@ -18,6 +18,7 @@ const UpdateStatus = lazy(() =>
   import("../components/StatusLogs/UpdateStatus")
 );
 const EditPassword = lazy(() => import("../pages/Authentication/EditPassword"));
+const PickSupport = lazy(() => import("../pages/Support/PickSupport"));
 
 const routes = [
   {
@@ -36,8 +37,8 @@ const routes = [
     roles: ["super_admin", "admin_support", "staff_support"],
   },
   {
-    path: "/support/pick-employee/:id/:first_role/:sec_role",
-    component: PickEmployee,
+    path: "/:type/pick-employee/:id",
+    component: PickSupport,
     roles: [
       "super_admin",
       "admin_logistic",
@@ -116,7 +117,7 @@ const routes = [
     ],
   },
   {
-    path: "/pick-employee/:id/:first_role/:sec_role",
+    path: "/pick-employee/:id/:type",
     component: PickEmployee,
     roles: [
       "super_admin",

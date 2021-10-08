@@ -75,7 +75,7 @@ export const fetchStatuslogByConfirmed = createAsyncThunk(
       .select(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
       )
-      .eq("name", "confirmed");
+      .eq("name", "confirmed").order('delivery_date',{foreignTable:'orders', ascending:false}).order('status',{ascending:true})
     if (response.error) {
       alert(response.error.message);
     }
@@ -92,7 +92,7 @@ export const fetchStatuslogByConfirmedEmployee = createAsyncThunk(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
       )
       .eq("name", "confirmed")
-      .eq("employee_id", id);
+      .eq("employee_id", id).order('delivery_date',{foreignTable:'orders', ascending:false}).order('status',{ascending:true})
     if (response.error) {
       alert(response.error.message);
     }
@@ -108,7 +108,7 @@ export const fetchStatuslogByCollected = createAsyncThunk(
       .select(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(*)`
       )
-      .eq("name", "collected");
+      .eq("name", "collected").order('delivery_date',{foreignTable:'orders', ascending:false}).order('status',{ascending:true})
     if (response.error) {
       alert(response.error.message);
     }
@@ -125,7 +125,7 @@ export const fetchStatuslogByCollectedByEmployee = createAsyncThunk(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(*)`
       )
       .eq("name", "collected")
-      .eq("employee_id", id);
+      .eq("employee_id", id).order('delivery_date',{foreignTable:'orders', ascending:false}).order('status',{ascending:true})
     if (response.error) {
       alert(response.error.message);
     }
@@ -141,7 +141,7 @@ export const fetchStatuslogsByDelivered = createAsyncThunk(
       .select(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
       )
-      .eq("name", "delivered");
+      .eq("name", "delivered").order('delivery_date',{foreignTable:'orders', ascending:false}).order('status',{ascending:true})
     if (response.error) {
       alert(response.error.message);
     }
@@ -158,7 +158,7 @@ export const fetchStatuslogsByDeliveredEmployee = createAsyncThunk(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
       )
       .eq("name", "delivered")
-      .eq("employee_id", id);
+      .eq("employee_id", id).order('delivery_date',{foreignTable:'orders', ascending:false}).order('status',{ascending:true})
     if (response.error) {
       alert(response.error.message);
     }
@@ -174,7 +174,7 @@ export const fetchStatuslogsByReturned = createAsyncThunk(
       .select(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status,pickup_date),employees:employee_id(name)`
       )
-      .eq("name", "returned");
+      .eq("name", "returned").order('delivery_date',{foreignTable:'orders', ascending:false}).order('status',{ascending:true})
     if (response.error) {
       alert(response.error.message);
     }
@@ -191,7 +191,7 @@ export const fetchStatuslogsByReturnedEmployee = createAsyncThunk(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status,pickup_date),employees:employee_id(name)`
       )
       .eq("name", "returned")
-      .eq("employee_id", id);
+      .eq("employee_id", id).order('delivery_date',{foreignTable:'orders', ascending:false}).order('status',{ascending:true})
     if (response.error) {
       alert(response.error.message);
     }
@@ -207,7 +207,7 @@ export const fetchStatuslogsByDone = createAsyncThunk(
       .select(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
       )
-      .eq("name", "done");
+      .eq("name", "done").order('delivery_date',{foreignTable:'orders', ascending:false}).order('status',{ascending:true})
     if (response.error) {
       alert(response.error.message);
     }
@@ -224,7 +224,7 @@ export const fetchStatuslogsByDoneEmployee = createAsyncThunk(
         `*,orders:order_id(customer_name,customer_address,delivery_date,status),employees:employee_id(name)`
       )
       .eq("name", "done")
-      .eq("employee_id", id);
+      .eq("employee_id", id).order('delivery_date',{foreignTable:'orders', ascending:false}).order('status',{ascending:true})
     if (response.error) {
       alert(response.error.message);
     }
@@ -298,6 +298,7 @@ const orderlogsSlice = createSlice({
       state.statuslogEmployeeUpdateStatus = "idle";
     },
   },
+  
   extraReducers: {
     [fetchStatuslogById.pending]: (state) => {
       state.statuslogByIdStatus = "loading";
