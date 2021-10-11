@@ -23,8 +23,16 @@ export const fetchReport = createAsyncThunk("reports/fetchReport", async () => {
   const response = await supabase
     .from("reports")
     .select(
-      `*,orders(customer_name,customer_address,created_at),confirmed:confirmed_by(name),collected:collected_by(name),delivered:delivered_by(name),returned:returned_by(name),done:done_by(name)`
+      `*,orders(customer_name,customer_address,created_at),supported:supported_by(name),confirmed:confirmed_by(name),collected:collected_by(name),delivered:delivered_by(name),returned:returned_by(name),done:done_by(name)`
     );
+  if (response.error) {
+    alert(response.error.message);
+  }
+  return response;
+});
+
+export const reportList = createAsyncThunk("reports/reportList", async () => {
+  const response = await supabase.from("reports").select(`*`);
   if (response.error) {
     alert(response.error.message);
   }

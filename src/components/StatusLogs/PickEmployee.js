@@ -235,7 +235,7 @@ function PickEmployee() {
             </div>
             <div className="flex justify-between mt-5">
               <div>
-                <Button tag={Link} to="/app/shipment" size="small">
+                <Button tag={Link} to="/app" size="small">
                   Cancel
                 </Button>
               </div>

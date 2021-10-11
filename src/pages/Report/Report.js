@@ -193,6 +193,13 @@ function ReportTable({ reportList }) {
         },
       },
       {
+        Header: "supported by",
+        accessor: "supported.name",
+        Cell: ({ cell: { value } }) => {
+          return <>{value ? value : <NoneIcon />}</>;
+        },
+      },
+      {
         Header: "confirmed at",
         accessor: "orders.created_at",
         Cell: ({ cell: { value } }) => {
