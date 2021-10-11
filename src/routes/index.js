@@ -72,12 +72,24 @@ const routes = [
   {
     path: "/courier/to-deliver",
     component: Delivery,
-    roles: ["super_admin", "admin_courier", "staff_courier"],
+    roles: [
+      "super_admin",
+      "admin_courier",
+      "staff_courier",
+      "admin_marketing",
+      "staff_marketing",
+    ],
   },
   {
     path: "/courier/to-pickup",
     component: Pickup,
-    roles: ["super_admin", "admin_courier", "staff_courier"],
+    roles: [
+      "super_admin",
+      "admin_courier",
+      "staff_courier",
+      "admin_marketing",
+      "staff_marketing",
+    ],
   },
   {
     path: "/report",
@@ -92,6 +104,7 @@ const routes = [
       "staff_courier",
       "admin_support",
       "staff_support",
+      "finance",
     ],
   },
   {

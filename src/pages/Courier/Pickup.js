@@ -113,14 +113,19 @@ function Pickup() {
   );
 
   useEffect(() => {
-    if(userRole){
-     if(userRole.role!== 'staff_courier' && orderListStatus === "idle" ){
-       dispatch(fetchStatuslogsByReturned());
-     } else if(userRole.role=== 'staff_courier' && orderListStatus === "idle"){
-       dispatch(fetchStatuslogsByReturnedEmployee(user.id));
-     }
+    if (userRole) {
+      if (userRole.role !== "staff_courier" && orderListStatus === "idle") {
+        dispatch(fetchStatuslogsByReturned());
+      } else if (
+        (userRole.role === "staff_courier" ||
+          userRole?.role === "staff_marketing" ||
+          userRole?.role === "admin_marketing") &&
+        orderListStatus === "idle"
+      ) {
+        dispatch(fetchStatuslogsByReturnedEmployee(user.id));
+      }
     }
-   }, [orderListStatus, userRole, dispatch]);
+  }, [orderListStatus, userRole, dispatch]);
 
   return (
     <>
@@ -145,6 +150,10 @@ function EmployeeTable({ statuslogByReturned }) {
 
   const columns = React.useMemo(
     () => [
+      {
+        Header: "Id",
+        accessor: "order_id",
+      },
       {
         Header: "Picked up by",
         accessor: "employees.name",

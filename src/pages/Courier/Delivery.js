@@ -116,14 +116,19 @@ function Delivery() {
   );
 
   useEffect(() => {
-    if(userRole){
-     if(userRole.role!== 'staff_courier' && orderListStatus === "idle" ){
-       dispatch(fetchStatuslogsByDelivered());
-     } else if(userRole.role=== 'staff_courier' && orderListStatus === "idle"){
-       dispatch(fetchStatuslogsByDeliveredEmployee(user.id));
-     }
+    if (userRole) {
+      if (userRole.role !== "staff_courier" && orderListStatus === "idle") {
+        dispatch(fetchStatuslogsByDelivered());
+      } else if (
+        (userRole.role === "staff_courier" ||
+          userRole?.role === "staff_marketing" ||
+          userRole?.role === "admin_marketing") &&
+        orderListStatus === "idle"
+      ) {
+        dispatch(fetchStatuslogsByDeliveredEmployee(user.id));
+      }
     }
-   }, [orderListStatus, userRole, dispatch]);
+  }, [orderListStatus, userRole, dispatch]);
 
   return (
     <>
