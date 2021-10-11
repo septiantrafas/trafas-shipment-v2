@@ -174,10 +174,7 @@ function PickEmployee() {
               </Label>
               <Label>
                 <span>Second Employee</span>
-                <Select
-                  className="mt-1"
-                  {...register("employee2", { required: true })}
-                >
+                <Select className="mt-1" {...register("employee2")}>
                   {employeeList
                     .filter((data) =>
                       type === "courier"
@@ -204,10 +201,7 @@ function PickEmployee() {
               </Label>
               <Label>
                 <span>Third Employee</span>
-                <Select
-                  className="mt-1"
-                  {...register("employee3", { required: true })}
-                >
+                <Select className="mt-1" {...register("employee3")}>
                   {employeeList
                     .filter((data) =>
                       type === "courier"
