@@ -28,6 +28,7 @@
     "classnames": "2.2.6",
     "faker": "4.1.0",
     "match-sorter": "^6.3.0",
+    "mathjs": "^9.5.0",
     "ndarray": "^1.0.19",
     "normalize-url": "^7.0.1",
     "postcss": "^8.3.6",

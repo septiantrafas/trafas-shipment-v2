@@ -48,6 +48,8 @@ import {
   clearStatuslogByReturnedStatus,
 } from "../Storages/orderlogsSlice";
 import XLSX from "xlsx";
+import { zeros } from "mathjs";
+import { supabase } from "../../supabase";
 
 function Report() {
   const dispatch = useDispatch();
@@ -129,7 +131,7 @@ function Report() {
         {reportListStatus === "loading" ? (
           <HollowDotsSpinner className="self-center" color="red" size="8" />
         ) : null}
-        <Button onClick={() => ExportReport(reportList)}>download</Button>
+        <Button onClick={() => ExportReport()}>download</Button>
       </div>
 
       <ReportTable reportList={reportList} />
@@ -137,31 +139,61 @@ function Report() {
   );
 }
 
-function ExportReport(reportList) {
-  // const data = [
-  //   // reportList
-  //   { id: 1, name: "Denny", age: 24 },
-  //   { id: 2, name: "Aditya", age: 25 },
-  //   { id: 3, name: "Pradipta", age: 26 },
-  //   { id: 4, name: "Ardhie", age: 27 },
-  //   { id: 5, name: "Putra", age: 28 },
-  //   { id: 6, name: "Prananta", age: 29 },
-  // ];
-  // console.log(reportList[0].orders);
-  // console.log(data)
-  // console.log(reportList.map((list)=>  {return list.length>1?Object.values(list):list}))
-  // console.log(reportList.map((list)=>  console.log(JSON.stringify(list))))
-  // const fileName = "AOO_XLS";
-  // let wb = XLSX.utils.book_new();
-  // wb.Props = {
-  //   Title: fileName,
-  //   Author: "Denny Pradipta",
-  //   CreatedDate: new Date(),
-  // };
-  // wb.SheetNames.push("Sheet 1");
-  // let ws = XLSX.utils.json_to_sheet(reportList);
-  // wb.Sheets["Sheet 1"] = ws;
-  // XLSX.writeFile(wb, `Hello.xls`);
+async function ExportReport() {
+  let { data: reports, error } = await supabase
+    .from("reports")
+    .select(
+      `orders(id,customer_name,customer_address,delivery_date,pickup_date,note,explaination),supported:supported_by(name),confirmed:confirmed_by(name),collected:collected_by(name),delivered:delivered_by(name),returned:returned_by(name),done:done_by(name)`
+    );
+  let header = [
+    "Order Id",
+    "Customer Name",
+    "Customer Address",
+    "Delivery Date",
+    "Pickup Date",
+    "Note",
+    "Explaination",
+    "Supported By",
+    "Operation Date",
+    "Confirmed By",
+    "Collected By",
+    "Delivered By",
+    "Returned By",
+    "Done By",
+  ];
+  let array = zeros([reports.length, 14]);
+  for (let i = 0; i < reports.length; i++) {
+    let temp = Object.values(reports[i]);
+    array[i][0] = temp[0]?.id ?? "";
+    array[i][1] = temp[0]?.customer_name ?? "";
+    array[i][2] = temp[0]?.customer_address ?? "";
+    array[i][3] = new Date(temp[0]?.delivery_date).toLocaleString() ?? "";
+    array[i][4] = new Date(temp[0]?.pickup_date).toLocaleString() ?? "";
+    array[i][5] = temp[0]?.note ?? "";
+    array[i][6] = temp[0]?.explaination ?? "";
+    array[i][7] = temp[1]?.name ?? "";
+    array[i][8] = new Date(temp[0]?.op_date).toLocaleString() ?? "";
+    array[i][9] = temp[2]?.name ?? "";
+    array[i][10] = temp[3]?.name ?? "";
+    array[i][11] = temp[4]?.name ?? "";
+    array[i][12] = temp[5]?.name ?? "";
+    array[i][13] = temp[6]?.name ?? "";
+  }
+  array = [header].concat(array);
+  console.log(array);
+
+  const fileName = "AOO_XLS";
+  let wb = XLSX.utils.book_new();
+  wb.Props = {
+    Title: "Report Shipment Trafas",
+    Author: "Admin",
+    CreatedDate: new Date(),
+  };
+  wb.SheetNames.push("Sheet 1");
+  // let ws = XLSX.utils.json_to_sheet(reports);
+  let ws = XLSX.utils.aoa_to_sheet(array);
+  wb.Sheets["Sheet 1"] = ws;
+  XLSX.writeFile(wb, `Report.xls`);
 }
 
 function ReportTable({ reportList }) {
