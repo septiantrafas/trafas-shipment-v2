@@ -17,6 +17,7 @@ import {
   NextIcon,
   EndIcon,
   NoneIcon,
+  DownloadIcon,
 } from "../../icons";
 import {
   Label,
@@ -35,7 +36,7 @@ import {
 } from "@windmill/react-ui";
 import { matchSorter } from "match-sorter";
 import { Link } from "react-router-dom";
-import { clearReportListStatus, fetchReport } from "../Storages/reportsSlice";
+import { fetchReport } from "../Storages/reportsSlice";
 import {
   clearOrderByIdStatus,
   clearOrderListStatus,
@@ -131,7 +132,9 @@ function Report() {
         {reportListStatus === "loading" ? (
           <HollowDotsSpinner className="self-center" color="red" size="8" />
         ) : null}
-        <Button onClick={() => ExportReport()}>download</Button>
+        <Button onClick={() => ExportReport()}>
+          <DownloadIcon />
+        </Button>
       </div>
 
       <ReportTable reportList={reportList} />

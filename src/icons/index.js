@@ -37,6 +37,7 @@ import { ReactComponent as PrevIcon } from "./prev.svg";
 import { ReactComponent as NextIcon } from "./next.svg";
 import { ReactComponent as StartIcon } from "./start.svg";
 import { ReactComponent as EndIcon } from "./end.svg";
+import { ReactComponent as DownloadIcon } from "./download.svg";
 
 export {
   ButtonsIcon,
@@ -78,4 +79,5 @@ export {
   NextIcon,
   StartIcon,
   EndIcon,
+  DownloadIcon,
 };
