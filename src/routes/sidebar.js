@@ -60,7 +60,20 @@ const roles = [
         icon: "CaseIcon",
         name: "Marketing",
       },
-
+      {
+        icon: "GithubIcon",
+        name: "Courier",
+        routes: [
+          {
+            path: "/app/courier/to-deliver",
+            name: "Delivery",
+          },
+          {
+            path: "/app/courier/to-pickup",
+            name: "Pickup",
+          },
+        ],
+      },
       {
         path: "/app/report",
         icon: "FormsIcon",
@@ -125,7 +138,20 @@ const roles = [
         icon: "CaseIcon",
         name: "Marketing",
       },
-
+      {
+        icon: "GithubIcon",
+        name: "Courier",
+        routes: [
+          {
+            path: "/app/courier/to-deliver",
+            name: "Delivery",
+          },
+          {
+            path: "/app/courier/to-pickup",
+            name: "Pickup",
+          },
+        ],
+      },
       {
         path: "/app/report",
         icon: "FormsIcon",
