@@ -120,7 +120,7 @@ function PickSupport() {
           },
         }}
       />
-      <PageTitle>Choose Employee</PageTitle>
+      <PageTitle>Select Employee</PageTitle>
       {supportUpdateStatus === "loading" ? (
         <HollowDotsSpinner className="self-center" color="red" size="8" />
       ) : (
