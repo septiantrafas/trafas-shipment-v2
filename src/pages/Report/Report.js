@@ -124,30 +124,30 @@ function Report() {
   return (
     <>
       <PageTitle>REPORT</PageTitle>
-      <div className="flex justify-start mb-4">
+      <div className="flex justify-between mb-4">
         <div className=" self-center dark:text-white mr-4">LIST</div>
         {reportListStatus === "loading" ? (
           <HollowDotsSpinner className="self-center" color="red" size="8" />
         ) : null}
+        <Button onClick={() => ExportReport(reportList)}>download</Button>
       </div>
-      {/* <Button onClick={()=>ExportReport(reportList)}>download</Button> */}
+
       <ReportTable reportList={reportList} />
     </>
   );
 }
 
 function ExportReport(reportList) {
-  const data = [
-    // reportList
-    { id: 1, name: "Denny", age: 24 },
-    { id: 2, name: "Aditya", age: 25 },
-    { id: 3, name: "Pradipta", age: 26 },
-    { id: 4, name: "Ardhie", age: 27 },
-    { id: 5, name: "Putra", age: 28 },
-    { id: 6, name: "Prananta", age: 29 },
-  ];
-
-  console.log(reportList[0].orders);
+  // const data = [
+  //   // reportList
+  //   { id: 1, name: "Denny", age: 24 },
+  //   { id: 2, name: "Aditya", age: 25 },
+  //   { id: 3, name: "Pradipta", age: 26 },
+  //   { id: 4, name: "Ardhie", age: 27 },
+  //   { id: 5, name: "Putra", age: 28 },
+  //   { id: 6, name: "Prananta", age: 29 },
+  // ];
+  // console.log(reportList[0].orders);
   // console.log(data)
   // console.log(reportList.map((list)=>  {return list.length>1?Object.values(list):list}))
   // console.log(reportList.map((list)=>  console.log(JSON.stringify(list))))

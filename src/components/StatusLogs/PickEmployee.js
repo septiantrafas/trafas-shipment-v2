@@ -56,8 +56,8 @@ function PickEmployee() {
     defaultValues: {
       employee_id: "",
       target_time: "",
-      employee2: "",
-      employee3: "",
+      employee2: null,
+      employee3: null,
     },
   });
 
@@ -176,7 +176,7 @@ function PickEmployee() {
                 <span>Second Employee</span>
                 <Select
                   className="mt-1"
-                  {...register("employee_id", { required: true })}
+                  {...register("employee2", { required: true })}
                 >
                   {employeeList
                     .filter((data) =>
@@ -206,7 +206,7 @@ function PickEmployee() {
                 <span>Third Employee</span>
                 <Select
                   className="mt-1"
-                  {...register("employee_id", { required: true })}
+                  {...register("employee3", { required: true })}
                 >
                   {employeeList
                     .filter((data) =>
