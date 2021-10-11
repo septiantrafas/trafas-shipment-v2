@@ -204,7 +204,7 @@ function EmployeeTable({ supportList }) {
                 <SearchIcon className="w-5 h-5" arial-hidden="true" />
               </Button>
               {userRole.role === "super_admin" ||
-              userRole.role === "admin_logistic" ? (
+              userRole.role === "admin_support" ? (
                 <Button
                   layout="link"
                   size="icon"

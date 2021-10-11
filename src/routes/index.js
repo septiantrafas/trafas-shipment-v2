@@ -45,6 +45,8 @@ const routes = [
       "staff_logistic",
       "admin_courier",
       "staff_courier",
+      "admin_support",
+      "staff_support",
     ],
   },
   {
@@ -88,6 +90,8 @@ const routes = [
       "staff_logistic",
       "admin_courier",
       "staff_courier",
+      "admin_support",
+      "staff_support",
     ],
   },
   {
