@@ -175,6 +175,9 @@ function PickEmployee() {
               <Label>
                 <span>Second Employee</span>
                 <Select className="mt-1" {...register("employee2")}>
+                  <option value={null} selected>
+                    ...
+                  </option>
                   {employeeList
                     .filter((data) =>
                       type === "courier"
@@ -202,6 +205,9 @@ function PickEmployee() {
               <Label>
                 <span>Third Employee</span>
                 <Select className="mt-1" {...register("employee3")}>
+                  <option value={null} selected>
+                    ...
+                  </option>
                   {employeeList
                     .filter((data) =>
                       type === "courier"
