@@ -119,7 +119,8 @@ function Pickup() {
       } else if (
         (userRole.role === "staff_courier" ||
           userRole?.role === "staff_marketing" ||
-          userRole?.role === "admin_marketing") &&
+          userRole?.role === "admin_marketing" ||
+          userRole?.role === "admin_courier") &&
         orderListStatus === "idle"
       ) {
         dispatch(fetchStatuslogsByReturnedEmployee(user.id));
